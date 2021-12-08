@@ -12,6 +12,7 @@ public class CorruptionManager : MonoBehaviour
 
     [SerializeField]
     private Tilemap map;
+    public Tilemap Map { get => map; }
 
     [SerializeField]
     private GameObject corruptionTile;
@@ -65,8 +66,8 @@ public class CorruptionManager : MonoBehaviour
                 //Debug.Log(gridPos);
 
                 Vector3 pos = new Vector3(Mathf.Floor(hit.point.x) + 0.5f, 0, Mathf.Floor(hit.point.z) + 0.5f);
-                Destroy(hit.transform.gameObject);
-                Instantiate(corruptionTile, pos, Quaternion.identity, map.transform);
+                //Destroy(hit.transform.gameObject);
+                //Instantiate(corruptionTile, pos, Quaternion.identity, map.transform);
             }
         }
 
