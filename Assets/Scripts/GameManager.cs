@@ -6,24 +6,43 @@ using UnityEngine.Events;
 
 public class GameManager : MonoBehaviour
 {
-
+    /*
+     * The tilemap which contains the ground tiles
+     * */
     [SerializeField]
     private Tilemap map;
 
+    /*
+     * The duration time of the game in minute
+     * */
     public float timerTime = 15;
 
+    /*
+     * The time scaling factor
+     * */
     [Range(1f, 20f)]
     public float timeScale = 1f;
 
+    /*
+     * The instance of corruption manager
+     * */
+    public CorruptionManager corruptionManager;
+
+    /*
+     * The event called when the game has ended
+     * */
     private UnityEvent EndGameEvent;
 
-    // Start is called before the first frame update
+    /*
+     * Initialize the end game event and pass values to the corruption manager
+     * */
     void Start()
     {
         EndGameEvent = new UnityEvent();
         EndGameEvent.AddListener(End);
 
-        GameObject.Find("CorruptionManager").GetComponent<CorruptionManager>().EndGameEvent = EndGameEvent;
+        corruptionManager.EndGameEvent = EndGameEvent;
+        corruptionManager.maxTimer = timerTime;
     }
 
     // Update is called once per frame
@@ -31,18 +50,21 @@ public class GameManager : MonoBehaviour
     {
     }
 
+    /*
+     * Get the score of the player and the corruption (The number of tiles of both)
+     * */
     public (int,int) GetScore()
     {
         int scorePlayer = 0;
         int scoreCorruption = 0;
         foreach (Transform child in map.transform)
         {
-            switch (child.gameObject.name)
+            switch (child.gameObject.GetComponent<TileDataContainer>().type)
             {
-                case "Grass":
+                case 0:
                     scorePlayer++;
                     break;
-                case "Dry_Ground":
+                case 1:
                     scoreCorruption++;
                     break;
                 default:
@@ -53,6 +75,10 @@ public class GameManager : MonoBehaviour
         return (scorePlayer, scoreCorruption);
     }
 
+    /*
+     * Callback method when the end game event is triggered
+     * Print the scores and pause the game
+     * */
     public void End()
     {
         (int, int) scores = GetScore();
