@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.Events;
 using System.Linq;
 
 public class CorruptionManager : MonoBehaviour
@@ -16,12 +17,19 @@ public class CorruptionManager : MonoBehaviour
     [SerializeField]
     private GameObject corruptionTile;
 
+    [SerializeField]
+    private Material corruptionMaterial;
+
     private List<GameObject> corruptedTiles = new List<GameObject>();
-    private List<GameObject> frontCorruptedTiles;
+    private List<GameObject> frontCorruptedTiles = new List<GameObject>();
 
     private Dictionary<GameObject, List<GameObject>> frontNeighborsDictionary = new Dictionary<GameObject, List<GameObject>>();
 
     private float timeElapsed = 0;
+    private bool isPaused = false;
+
+    [HideInInspector]
+    public UnityEvent EndGameEvent;
     
 
     // Start is called before the first frame update
@@ -36,91 +44,54 @@ public class CorruptionManager : MonoBehaviour
         }
 
         corruptedTiles.Sort(new ForwardCorruptionComparaison());
-        frontCorruptedTiles = corruptedTiles.Where(tile => forwardCorruption(tile)).ToList();
-
-        Debug.Log(Time.realtimeSinceStartup);
-        float timeOnCorruptionCurve = Time.realtimeSinceStartup / (maxTimer * 60);
-        Debug.Log(timeOnCorruptionCurve);
-        Debug.Log(corruptionRate.Evaluate(timeOnCorruptionCurve));
-        Debug.Log(debitRate / corruptionRate.Evaluate(timeOnCorruptionCurve));
+        corruptedTiles.Where(tile => forwardCorruption(tile)).ToList();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        /*if (Input.GetMouseButtonDown(0))
         {
             Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
             if (Physics.Raycast(mouseRay, out hit))
             {
-                Debug.Log(hit.transform.gameObject.name);
-                mouseRay.GetPoint(hit.distance);
-
-                Vector3Int mapPos = map.WorldToCell(hit.point);
-                Debug.Log(mapPos);
-
-                //Vector3Int gridPos = grid.WorldToCell(hit.point);
-                //Debug.Log(gridPos);
-
                 Vector3 pos = new Vector3(Mathf.Floor(hit.point.x) + 0.5f, 0, Mathf.Floor(hit.point.z) + 0.5f);
-                Destroy(hit.transform.gameObject);
-                Instantiate(corruptionTile, pos, Quaternion.identity, map.transform);
+                hit.transform.gameObject.GetComponent<MeshRenderer>().material = corruptionMaterial;
+                hit.transform.gameObject.name = "Dry_Ground";
+            }
+        }*/
+
+
+        if (frontNeighborsDictionary.Count > 0)
+        {
+            timeElapsed += Time.deltaTime;
+            float timeOnCorruptionCurve = Time.realtimeSinceStartup / (maxTimer * 60);
+
+            if (timeElapsed >= debitRate / corruptionRate.Evaluate(timeOnCorruptionCurve))
+            {
+                spread();
+                timeElapsed = 0;
             }
         }
-
-        timeElapsed += Time.deltaTime;
-        float timeOnCorruptionCurve = Time.realtimeSinceStartup / (maxTimer * 60);
-        //Debug.Log(timeElapsed);
-        //Debug.Log(debitRate / corruptionRate.Evaluate(timeOnCorruptionCurve));
-        if (timeElapsed >= debitRate / corruptionRate.Evaluate(timeOnCorruptionCurve))
+        else if(frontNeighborsDictionary.Count <= 0 && !isPaused)
         {
-            spread();
-            timeElapsed = 0;
+            EndGameEvent.Invoke();
+            isPaused = !isPaused;
         }
     }
 
-    /*
-     * AU SECOURS C'EST MOCHE
-     * Il y a plein de problème à faire ça comme ça 
-     * (seul point positif c'est plus rapide que parcourir toutes les tiles et comparer)
-     * Check si on peut pas limiter le hit a seulement le sol et pas les batiments etc ...
-     * */
     bool forwardCorruption(GameObject tile)
     {
-        List<Vector3> positions = new List<Vector3>();
-        positions.Add(tile.transform.position + new Vector3(1, 0, 0));
-        positions.Add(tile.transform.position + new Vector3(-1, 0, 0));
-        positions.Add(tile.transform.position + new Vector3(0, 0, 1));
-        positions.Add(tile.transform.position + new Vector3(0, 0, -1));
+        List<GameObject> neighbors = GetNeighbors(tile);
 
+        List<GameObject> neighborsNotCorrupted = neighbors.Where(neigh => neigh.name != "Dry_Ground").ToList();
 
-        Vector3 originOffset = new Vector3(0, 1, 0);
-        Vector3 direction = new Vector3(0, -1, 0);
-        Ray ray;
-        RaycastHit hit;
-        int count = 0;
-        List<GameObject> neigbors = new List<GameObject>();
-        foreach (Vector3 pos in positions)
+        if (neighborsNotCorrupted.Count > 0)
         {
-            
-            ray = new Ray(pos + originOffset, direction);
-
-            if (Physics.Raycast(ray, out hit))
-            {
-                if (hit.transform.gameObject.name != "Dry_Ground")
-                {
-                    neigbors.Add(hit.transform.gameObject);
-                    count++;
-                }
-            }
-            
-        }
-        
-        if (count > 0)
-        {
-            frontNeighborsDictionary.Add(tile, neigbors);
+            frontNeighborsDictionary.Add(tile, neighborsNotCorrupted);
+            //frontCorruptedTiles.Add(tile);
             return true;
         }
         else
@@ -131,18 +102,41 @@ public class CorruptionManager : MonoBehaviour
 
     private void spread()
     {
+
         int randomIndex = Random.Range(0, (int)frontNeighborsDictionary.Count);
         List<GameObject> randomValueInDict = frontNeighborsDictionary.ElementAt(randomIndex).Value;
-        //Debug.Log(randomIndex);
-        //Debug.Log(frontNeighborsDictionary.Count);
         GameObject randomKeyInDict = frontNeighborsDictionary.ElementAt(randomIndex).Key;
-
+        
         int randomIndexValue = Random.Range(0, (int)randomValueInDict.Count);
-        //Debug.Log(randomIndexValue);
-        //Debug.Log(randomValueInDict.Count);
-
         GameObject tile = randomValueInDict.ElementAt(randomIndexValue);
 
+        List<GameObject> neighbors = GetNeighbors(tile);
+        List<GameObject> neighborsNotCorrupted = neighbors.Where(neigh => neigh.name != "Dry_Ground").ToList();
+        List<GameObject> neighborsCorrupted = neighbors.Where(neigh => neigh.name == "Dry_Ground").ToList();
+
+        foreach(GameObject neigh in neighborsCorrupted)
+        {
+            frontNeighborsDictionary[neigh].Remove(tile);
+            if (frontNeighborsDictionary[neigh].Count == 0)
+            {
+                frontNeighborsDictionary.Remove(neigh);
+            }
+        }
+
+        tile.GetComponent<MeshRenderer>().material = corruptionMaterial;
+        tile.name = "Dry_Ground";
+
+        forwardCorruption(tile);
+    }
+
+    /*
+     * Get the neighboring tiles
+     * Cast a ray to each neighbor position to get the GameObject
+     * param GameObject tile : The tile from which we cant the neighbors
+     * return List<GameObject> neighbors : The list of neighboring tiles
+     * */
+    private List<GameObject> GetNeighbors(GameObject tile)
+    {
         List<Vector3> positions = new List<Vector3>();
         positions.Add(tile.transform.position + new Vector3(1, 0, 0));
         positions.Add(tile.transform.position + new Vector3(-1, 0, 0));
@@ -154,40 +148,20 @@ public class CorruptionManager : MonoBehaviour
         Vector3 direction = new Vector3(0, -1, 0);
         Ray ray;
         RaycastHit hit;
-        foreach (Vector3 position in positions)
+        List<GameObject> neigbors = new List<GameObject>();
+        foreach (Vector3 pos in positions)
         {
 
-            ray = new Ray(position + originOffset, direction);
+            ray = new Ray(pos + originOffset, direction);
 
             if (Physics.Raycast(ray, out hit))
             {
-                if (hit.transform.gameObject.name == "Dry_Ground")
-                {
-                    frontNeighborsDictionary[hit.transform.gameObject].Remove(tile);
-                    if(frontNeighborsDictionary[hit.transform.gameObject].Count == 0)
-                    {
-                        frontNeighborsDictionary.Remove(hit.transform.gameObject);
-                    }
-                }
+                neigbors.Add(hit.transform.gameObject);
             }
 
         }
 
-
-
-        Vector3 pos = new Vector3(Mathf.Floor(tile.transform.position.x) + 0.5f, 0, Mathf.Floor(tile.transform.position.z) + 0.5f);
-        //randomValueInDict.RemoveAt(randomIndexValue);
-        Destroy(tile);
-        GameObject newTile = Instantiate(corruptionTile, pos, Quaternion.identity, map.transform);
-        forwardCorruption(newTile);
-        if (randomValueInDict.Count == 0)
-        {
-            frontNeighborsDictionary.Remove(randomKeyInDict);
-        }
-        else
-        {
-            frontNeighborsDictionary[randomKeyInDict] = randomValueInDict;
-        }
+        return neigbors;
     }
 
 }
