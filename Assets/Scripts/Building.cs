@@ -104,6 +104,18 @@ public class Building : MonoBehaviour
                 Disable();
     }
 
+    //DEBUG
+    private void OnEnable()
+    {
+        Construct();
+    }
+
+    //DEBUG
+    private void OnDisable()
+    {
+        Disable();
+    }
+
     public void Enable()
     {
         _running = true;
