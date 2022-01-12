@@ -23,7 +23,6 @@ public class CorruptionManager : MonoBehaviour
     private Dictionary<GameObject, List<GameObject>> frontNeighborsDictionary = new Dictionary<GameObject, List<GameObject>>();
 
     private float timeElapsed = 0;
-    
 
     // Start is called before the first frame update
     void Start()
@@ -39,11 +38,11 @@ public class CorruptionManager : MonoBehaviour
         corruptedTiles.Sort(new ForwardCorruptionComparaison());
         frontCorruptedTiles = corruptedTiles.Where(tile => forwardCorruption(tile)).ToList();
 
-        Debug.Log(Time.realtimeSinceStartup);
+        //Debug.Log(Time.realtimeSinceStartup);
         float timeOnCorruptionCurve = Time.realtimeSinceStartup / (maxTimer * 60);
-        Debug.Log(timeOnCorruptionCurve);
-        Debug.Log(corruptionRate.Evaluate(timeOnCorruptionCurve));
-        Debug.Log(debitRate / corruptionRate.Evaluate(timeOnCorruptionCurve));
+        //Debug.Log(timeOnCorruptionCurve);
+        //Debug.Log(corruptionRate.Evaluate(timeOnCorruptionCurve));
+        //Debug.Log(debitRate / corruptionRate.Evaluate(timeOnCorruptionCurve));
     }
 
     // Update is called once per frame

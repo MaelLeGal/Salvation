@@ -29,12 +29,8 @@ public class InputManager : MonoBehaviour
             {
                 mouseRay.GetPoint(hit.distance);
 
-                Vector3Int mapPos = _map.WorldToCell(hit.point);
-
-                Vector3 pos = new Vector3(Mathf.Floor(hit.point.x) + 0.5f, 0, Mathf.Floor(hit.point.z) + 0.5f);
-
-                _tmpSelection = mapPos;
-                _tmpSelectionWorld = pos;
+                _tmpSelection = _map.WorldToCell(hit.point);
+                _tmpSelectionWorld = new Vector3(Mathf.Floor(hit.point.x) + 0.5f, 0, Mathf.Floor(hit.point.z) + 0.5f);
             }
         }
 
@@ -45,21 +41,19 @@ public class InputManager : MonoBehaviour
 
             if (Physics.Raycast(mouseRay, out hit))
             {
-                Debug.Log(hit.transform.gameObject.name);
                 mouseRay.GetPoint(hit.distance);
 
-                Vector3Int mapPos = _map.WorldToCell(hit.point);
-                Debug.Log(name + " " + mapPos);
-
-                Vector3 pos = new Vector3(Mathf.Floor(hit.point.x) + 0.5f, 0, Mathf.Floor(hit.point.z) + 0.5f);
-
-                _selection = mapPos;
-                _selectionWorld = pos;
+                _selection = _map.WorldToCell(hit.point);
+                _selectionWorld = new Vector3(Mathf.Floor(hit.point.x) + 0.5f, 0, Mathf.Floor(hit.point.z) + 0.5f);
             }
         }
         else if (Input.GetMouseButtonDown(1))
         {
             _selection.z = -1;
+        }
+        else if (Input.GetMouseButtonDown(2))
+        {
+            // Get the clicked building and disable it
         }
     }
 
