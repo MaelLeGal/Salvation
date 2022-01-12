@@ -2,125 +2,126 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.Events;
 using System.Linq;
 
 public class CorruptionManager : MonoBehaviour
 {
+    /*
+     * The curve of corruption rate.
+     * */
     public AnimationCurve corruptionRate;
-    public int debitRate = 1;
-    public int maxTimer = 15;
 
+    /*
+     * The number of second on which we base the spreading rate
+     * Example : With an evaluation of the corruption rate at time T of 0.1 and a debit rate of 5sec, the time between each spread is around 50sec
+     * same example but with a debit rate of 1sec, the time between each spread is around 10sec
+     * */
+    public int debitRate = 1;
+
+    /*
+     * The duration time of the game in minute
+     * */
+    public float maxTimer = 15;
+
+    /*
+     * The tilemap which contains the ground tiles
+     * */
     [SerializeField]
     private Tilemap map;
     public Tilemap Map { get => map; }
 
+    /*
+     * The material used to represent the corruption;
+     * */
     [SerializeField]
-    private GameObject corruptionTile;
+    private Material corruptionMaterial;
 
+    /*
+     * A list of corrupted tiles;
+     * */
     private List<GameObject> corruptedTiles = new List<GameObject>();
-    private List<GameObject> frontCorruptedTiles;
 
+    /*
+     * A dictionnary of the corrupted tiles in the front (adjacent to non corrupted tiles) and their neighbors
+     * */
     private Dictionary<GameObject, List<GameObject>> frontNeighborsDictionary = new Dictionary<GameObject, List<GameObject>>();
 
+    /*
+     * The time elapsed since the last spread
+     * */
     private float timeElapsed = 0;
 
-    // Start is called before the first frame update
+    /*
+     * A boolean to check if the game is paused or not
+     * */
+    private bool isPaused = false;
+
+    /*
+     * An Event from the GameManager
+     * Used to call Invoke and end the game
+     * */
+    [HideInInspector]
+    public UnityEvent EndGameEvent;
+    
+
+    /*
+     * Get all the corrupted tiles from the map
+     * Sort the tiles and initialise the dictionnary with the forwardCorruption Method
+     * */
     void Start()
     {
         foreach(Transform child in map.transform)
         {
-            if(child.gameObject.name == "Dry_Ground")
+            if(child.gameObject.GetComponent<TileDataContainer>().isCorrupted == true)
             {
                 corruptedTiles.Add(child.gameObject);
             }
         }
 
         corruptedTiles.Sort(new ForwardCorruptionComparaison());
-        frontCorruptedTiles = corruptedTiles.Where(tile => forwardCorruption(tile)).ToList();
-
-        //Debug.Log(Time.realtimeSinceStartup);
-        float timeOnCorruptionCurve = Time.realtimeSinceStartup / (maxTimer * 60);
-        //Debug.Log(timeOnCorruptionCurve);
-        //Debug.Log(corruptionRate.Evaluate(timeOnCorruptionCurve));
-        //Debug.Log(debitRate / corruptionRate.Evaluate(timeOnCorruptionCurve));
+        corruptedTiles.Where(tile => forwardCorruption(tile)).ToList();
     }
 
-    // Update is called once per frame
+    /*
+     * Spread the corruption at intervals by using the corruptionRate curve
+     * If the corruption can not spread further, pause the game and call the EndGameEvent
+     * */
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (frontNeighborsDictionary.Count > 0)
         {
-            Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-
-            if (Physics.Raycast(mouseRay, out hit))
+            timeElapsed += Time.deltaTime;
+            float timeOnCorruptionCurve = Time.realtimeSinceStartup / (maxTimer * 60);
+            if (timeElapsed >= debitRate / corruptionRate.Evaluate(timeOnCorruptionCurve))
             {
-                Debug.Log(hit.transform.gameObject.name);
-                mouseRay.GetPoint(hit.distance);
-
-                Vector3Int mapPos = map.WorldToCell(hit.point);
-                Debug.Log(mapPos);
-
-                //Vector3Int gridPos = grid.WorldToCell(hit.point);
-                //Debug.Log(gridPos);
-
-                Vector3 pos = new Vector3(Mathf.Floor(hit.point.x) + 0.5f, 0, Mathf.Floor(hit.point.z) + 0.5f);
-                //Destroy(hit.transform.gameObject);
-                //Instantiate(corruptionTile, pos, Quaternion.identity, map.transform);
+                spread();
+                timeElapsed = 0;
             }
         }
-
-        timeElapsed += Time.deltaTime;
-        float timeOnCorruptionCurve = Time.realtimeSinceStartup / (maxTimer * 60);
-        //Debug.Log(timeElapsed);
-        //Debug.Log(debitRate / corruptionRate.Evaluate(timeOnCorruptionCurve));
-        if (timeElapsed >= debitRate / corruptionRate.Evaluate(timeOnCorruptionCurve))
+        else if(frontNeighborsDictionary.Count <= 0 && !isPaused)
         {
-            spread();
-            timeElapsed = 0;
+            EndGameEvent.Invoke();
+            isPaused = !isPaused;
         }
     }
 
     /*
-     * AU SECOURS C'EST MOCHE
-     * Il y a plein de problème à faire ça comme ça 
-     * (seul point positif c'est plus rapide que parcourir toutes les tiles et comparer)
-     * Check si on peut pas limiter le hit a seulement le sol et pas les batiments etc ...
+     * Check if the tile is a front tile or not(adjacent to non corrupted tiles)
+     * Add the tile to the dictionnary if it has at least one neighbor not corrupted and return true
+     * if not, return false has it is not a front tile
+     * param GameObject tile : The tile from which we want to check if it is a front tile or not
+     * return bool isFront : true if the tile is a front tile, false otherwise
      * */
     bool forwardCorruption(GameObject tile)
     {
-        List<Vector3> positions = new List<Vector3>();
-        positions.Add(tile.transform.position + new Vector3(1, 0, 0));
-        positions.Add(tile.transform.position + new Vector3(-1, 0, 0));
-        positions.Add(tile.transform.position + new Vector3(0, 0, 1));
-        positions.Add(tile.transform.position + new Vector3(0, 0, -1));
+        List<GameObject> neighbors = GetNeighbors(tile);
 
+        List<GameObject> neighborsNotCorrupted = neighbors.Where(neigh => neigh.GetComponent<TileDataContainer>().isCorrupted == false).ToList();
 
-        Vector3 originOffset = new Vector3(0, 1, 0);
-        Vector3 direction = new Vector3(0, -1, 0);
-        Ray ray;
-        RaycastHit hit;
-        int count = 0;
-        List<GameObject> neigbors = new List<GameObject>();
-        foreach (Vector3 pos in positions)
+        if (neighborsNotCorrupted.Count > 0)
         {
-            
-            ray = new Ray(pos + originOffset, direction);
-
-            if (Physics.Raycast(ray, out hit))
-            {
-                if (hit.transform.gameObject.name != "Dry_Ground")
-                {
-                    neigbors.Add(hit.transform.gameObject);
-                    count++;
-                }
-            }
-            
-        }
-        
-        if (count > 0)
-        {
-            frontNeighborsDictionary.Add(tile, neigbors);
+            frontNeighborsDictionary.Add(tile, neighborsNotCorrupted);
             return true;
         }
         else
@@ -129,20 +130,48 @@ public class CorruptionManager : MonoBehaviour
         }
     }
 
+    /*
+     * Change a random tile from the non-corrupted neigbors of a random front tile into a corrupted tile.
+     * */
     private void spread()
     {
+
         int randomIndex = Random.Range(0, (int)frontNeighborsDictionary.Count);
         List<GameObject> randomValueInDict = frontNeighborsDictionary.ElementAt(randomIndex).Value;
-        //Debug.Log(randomIndex);
-        //Debug.Log(frontNeighborsDictionary.Count);
         GameObject randomKeyInDict = frontNeighborsDictionary.ElementAt(randomIndex).Key;
-
+        
         int randomIndexValue = Random.Range(0, (int)randomValueInDict.Count);
-        //Debug.Log(randomIndexValue);
-        //Debug.Log(randomValueInDict.Count);
-
         GameObject tile = randomValueInDict.ElementAt(randomIndexValue);
 
+        List<GameObject> neighbors = GetNeighbors(tile);
+        List<GameObject> neighborsNotCorrupted = neighbors.Where(neigh => neigh.GetComponent<TileDataContainer>().isCorrupted == false).ToList();
+        List<GameObject> neighborsCorrupted = neighbors.Where(neigh => neigh.GetComponent<TileDataContainer>().isCorrupted == true).ToList();
+
+        foreach(GameObject neigh in neighborsCorrupted)
+        {
+            frontNeighborsDictionary[neigh].Remove(tile);
+            if (frontNeighborsDictionary[neigh].Count == 0)
+            {
+                frontNeighborsDictionary.Remove(neigh);
+            }
+        }
+
+        tile.GetComponent<MeshRenderer>().material = corruptionMaterial;
+        tile.name = "Dry_Ground";
+        tile.GetComponent<TileDataContainer>().isCorrupted = true;
+        tile.GetComponent<TileDataContainer>().type = 1;
+
+        forwardCorruption(tile);
+    }
+
+    /*
+     * Get the neighboring tiles
+     * Cast a ray to each neighbor position to get the GameObject
+     * param GameObject tile : The tile from which we want the neighbors
+     * return List<GameObject> neighbors : The list of neighboring tiles
+     * */
+    private List<GameObject> GetNeighbors(GameObject tile)
+    {
         List<Vector3> positions = new List<Vector3>();
         positions.Add(tile.transform.position + new Vector3(1, 0, 0));
         positions.Add(tile.transform.position + new Vector3(-1, 0, 0));
@@ -154,44 +183,27 @@ public class CorruptionManager : MonoBehaviour
         Vector3 direction = new Vector3(0, -1, 0);
         Ray ray;
         RaycastHit hit;
-        foreach (Vector3 position in positions)
+        List<GameObject> neigbors = new List<GameObject>();
+        foreach (Vector3 pos in positions)
         {
 
-            ray = new Ray(position + originOffset, direction);
+            ray = new Ray(pos + originOffset, direction);
 
             if (Physics.Raycast(ray, out hit))
             {
-                if (hit.transform.gameObject.name == "Dry_Ground")
-                {
-                    frontNeighborsDictionary[hit.transform.gameObject].Remove(tile);
-                    if(frontNeighborsDictionary[hit.transform.gameObject].Count == 0)
-                    {
-                        frontNeighborsDictionary.Remove(hit.transform.gameObject);
-                    }
-                }
+                neigbors.Add(hit.transform.gameObject);
             }
 
         }
 
-
-
-        Vector3 pos = new Vector3(Mathf.Floor(tile.transform.position.x) + 0.5f, 0, Mathf.Floor(tile.transform.position.z) + 0.5f);
-        //randomValueInDict.RemoveAt(randomIndexValue);
-        Destroy(tile);
-        GameObject newTile = Instantiate(corruptionTile, pos, Quaternion.identity, map.transform);
-        forwardCorruption(newTile);
-        if (randomValueInDict.Count == 0)
-        {
-            frontNeighborsDictionary.Remove(randomKeyInDict);
-        }
-        else
-        {
-            frontNeighborsDictionary[randomKeyInDict] = randomValueInDict;
-        }
+        return neigbors;
     }
 
 }
 
+/*
+ * Definition of a Comparer for the first check of front tiles
+ * */
 public class ForwardCorruptionComparaison : IComparer<GameObject>
 {
     public int Compare(GameObject x, GameObject y)

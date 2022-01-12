@@ -6,12 +6,14 @@ public class InputManager : MonoBehaviour
     private Tilemap _map;
     private Vector3Int _tmpSelection;
     private Vector3 _tmpSelectionWorld;
+    private GameObject _selectedTile;
     private Vector3Int _selection; // tile position for the selection (_selection.z == -1 if no selection)
     private Vector3 _selectionWorld; // world position for the selected tile
 
     public CorruptionManager CorruptionManager;
     public Transform Tilemap_Building;
     public GameObject TestBuildingPrefab;
+    public GameObject TableSacrificePrefab;
 
     private void Start()
     {
@@ -21,6 +23,7 @@ public class InputManager : MonoBehaviour
 
     private void Update()
     {
+        // Green selection preview
         {
             Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
@@ -44,12 +47,14 @@ public class InputManager : MonoBehaviour
                 mouseRay.GetPoint(hit.distance);
 
                 _selection = _map.WorldToCell(hit.point);
+                _selectedTile = hit.collider.gameObject;
                 _selectionWorld = new Vector3(Mathf.Floor(hit.point.x) + 0.5f, 0, Mathf.Floor(hit.point.z) + 0.5f);
             }
         }
         else if (Input.GetMouseButtonDown(1))
         {
             _selection.z = -1;
+            _selectedTile = null;
         }
         else if (Input.GetMouseButtonDown(2))
         {
@@ -57,7 +62,7 @@ public class InputManager : MonoBehaviour
         }
     }
 
-    public void ConstructTestBuilding()
+    public void Construct(GameObject asset)
     {
         if (_selection.z == -1)
         {
@@ -65,15 +70,20 @@ public class InputManager : MonoBehaviour
             return;
         }
 
-        /*
-         * if (tile is not green)
-         * {
-         *     Debug.LogWarning(name + " : Il m'est impossible de construire un bâtiment ici, la case n'est pas verte ! " + _selection);
-         *     return;
-         * }
-         */
+        if (_selectedTile.name != "Grass")
+        {
+            Debug.LogWarning(name + " : Il m'est impossible de construire un bâtiment ici, la case n'est pas de l'herbe ! " + _selection);
+            return;
+        }
 
-        Instantiate(TestBuildingPrefab, _selectionWorld + Vector3.up, Quaternion.identity, Tilemap_Building);
+        if (_selectedTile.GetComponent<TileDataContainer>().isOccupied)
+        {
+            Debug.LogWarning(name + " : Il m'est impossible de construire un bâtiment ici, la case est déjà occupée ! " + _selection);
+            return;
+        }
+
+        Instantiate(asset, _selectionWorld + Vector3.up, Quaternion.identity, Tilemap_Building);
+        _selectedTile.GetComponent<TileDataContainer>().isOccupied = true;
     }
 
     private void OnDrawGizmos()

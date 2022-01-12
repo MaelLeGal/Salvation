@@ -44,7 +44,7 @@ public sealed class TickingSystem : MonoBehaviour
         foreach (Building b in _buildings)
             b.Tick();
 
-        Debug.Log("TS : Tick @" + Time.time);
+        //Debug.Log("TS : Tick @" + Time.time);
     }
 
     private void Update()
