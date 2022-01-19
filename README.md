@@ -63,7 +63,7 @@ Exemple : on considère le bâtiment *Puit*, au moment de la création du *Puit* le
 Pour ce faire j'ai utilisé le système d'évènements intégré dans C#.  
 En effet le singleton *InputManager* déclenche l'évènement *OnConstruct* lors de la création d'un bâtiment avec comme argument une structure *ConstructEventArgs*.  
 
-### ConstructEventArgs (WIP)
+### ConstructEventArgs
 
 Cette structure contient différentes informations importante pour l'évènement :
 - Type (*Type*) : défini ce qu'il se passe lors de la création d'un bâtiment.
@@ -71,26 +71,5 @@ Cette structure contient différentes informations importante pour l'évènement :
   - Herbe (*Grass*) : change des cases en herbe.
   - Terrain neutre (*Neutral*) : change des cases en terrain neutre.
   - Terrain corrompu (*DryGround*) : change des cases en terrain corrompu.
-- Pattern (*Pattern*) : défini le pattern de changement des cases. Il est identifié par un Vector2 définissant la zone d'effet.
-  - Exemple : [1; 3] =>
-
-    | O | X | O |
-    |---|---|---|
-    | **O** | *X* | **O** |
-    | **O** | **X** | **O** |
-
-  - Exemple : [3; 1] =>
-
-    | O | O | O |
-    |---|---|---|
-    | **X** | *X* | **X** |
-    | **O** | **O** | **O** |
-
-  - Exemple : [3; 3] =>
-
-    | X | X | X |
-    |---|---|---|
-    | **X** | *X* | **X** |
-    | **X** | **X** | **X** |
-
+- Rayon (*Radius*) : défini le rayon de changement des cases.
 - Case (*Tile*) : référence la case sur laquelle le bâtiment est construit (affectée par l'*InputManager*).

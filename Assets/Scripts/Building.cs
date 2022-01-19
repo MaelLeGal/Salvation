@@ -146,18 +146,4 @@ public class Building : MonoBehaviour
 
         Debug.Log(name + " : I sleep");
     }
-
-    // MAke sur the pattern is composed of odd numbers only
-    private void OnValidate()
-    {
-        if (_constructEvent.pattern.x % 2 == 0)
-            _constructEvent.pattern.x--;
-        if (_constructEvent.pattern.y % 2 == 0)
-            _constructEvent.pattern.y--;
-
-        if (_constructEvent.pattern.x <= 0)
-            _constructEvent.pattern.x = 1;
-        if (_constructEvent.pattern.y <= 0)
-            _constructEvent.pattern.y = 1;
-    }
 }

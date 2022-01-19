@@ -128,7 +128,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _placeableOnGrass: 1
-  _placeableOnNeutral: 0
+  _placeableOnNeutral: 1
   _placeableOnDryGround: 0
   _constructionCosts:
     _costs:
@@ -145,8 +145,7 @@ MonoBehaviour:
   _capacity: 5
   _constructEvent:
     type: 1
-    pattern: {x: 5, y: 5}
-    position: {x: 0, y: 0}
+    radius: 4
     tile: {fileID: 0}
 --- !u!1 &8513393372838014976
 GameObject:

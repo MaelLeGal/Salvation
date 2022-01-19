@@ -20,9 +20,9 @@ public class InputManager : MonoBehaviour
             Neutral,
             DryGround
         }
-        public Type type = Type.None;
+        public Type type;
 
-        public Vector2 pattern = Vector2.one;
+        public float radius;
 
         [HideInInspector]
         public GameObject tile;
