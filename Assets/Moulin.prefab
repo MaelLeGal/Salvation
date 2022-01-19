@@ -127,6 +127,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72914e1e771c4d740bd648ff4321132c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _placeableOnGrass: 1
+  _placeableOnNeutral: 0
+  _placeableOnDryGround: 0
   _constructionCosts:
     _costs:
     - _resource: 0
@@ -140,6 +143,11 @@ MonoBehaviour:
     - _resource: 2
       _price: 1
   _capacity: 5
+  _constructEvent:
+    type: 1
+    pattern: {x: 5, y: 5}
+    position: {x: 0, y: 0}
+    tile: {fileID: 0}
 --- !u!1 &8513393372838014976
 GameObject:
   m_ObjectHideFlags: 0

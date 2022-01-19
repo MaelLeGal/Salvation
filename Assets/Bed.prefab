@@ -535,6 +535,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72914e1e771c4d740bd648ff4321132c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _placeableOnGrass: 1
+  _placeableOnNeutral: 0
+  _placeableOnDryGround: 0
   _constructionCosts:
     _costs:
     - _resource: 1

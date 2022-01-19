@@ -53,3 +53,44 @@ Clicker sur le **+** pour ajouter un nouvel appel, laisser *Runtime Only*, l'obj
 Un nouveau champs est apparu contenant le *GameObject* à passer en paramètre, il faut donc sélectionner le bâtiment créé dans l'onglet **Assets**.
 
 Bravo, vous avez créé un nouveau bâtiment !
+
+## Evènement de création de bâtiments spéciaux
+
+Certains bâtiments sont spéciaux, au lieu de consommer/produire des ressources par tick ils vont uniquement déclencher un évènement a leur construction.
+
+Exemple : on considère le bâtiment *Puit*, au moment de la création du *Puit* les cases adjacentes vont devenir de l'herbe.
+
+Pour ce faire j'ai utilisé le système d'évènements intégré dans C#.  
+En effet le singleton *InputManager* déclenche l'évènement *OnConstruct* lors de la création d'un bâtiment avec comme argument une structure *ConstructEventArgs*.  
+
+### ConstructEventArgs (WIP)
+
+Cette structure contient différentes informations importante pour l'évènement :
+- Type (*Type*) : défini ce qu'il se passe lors de la création d'un bâtiment.
+  - Aucun (*None*) : la construction n'aura aucun effet particulier.
+  - Herbe (*Grass*) : change des cases en herbe.
+  - Terrain neutre (*Neutral*) : change des cases en terrain neutre.
+  - Terrain corrompu (*DryGround*) : change des cases en terrain corrompu.
+- Pattern (*Pattern*) : défini le pattern de changement des cases. Il est identifié par un Vector2 définissant la zone d'effet.
+  - Exemple : [1; 3] =>
+
+    | O | X | O |
+    |---|---|---|
+    | **O** | *X* | **O** |
+    | **O** | **X** | **O** |
+
+  - Exemple : [3; 1] =>
+
+    | O | O | O |
+    |---|---|---|
+    | **X** | *X* | **X** |
+    | **O** | **O** | **O** |
+
+  - Exemple : [3; 3] =>
+
+    | X | X | X |
+    |---|---|---|
+    | **X** | *X* | **X** |
+    | **X** | **X** | **X** |
+
+- Case (*Tile*) : référence la case sur laquelle le bâtiment est construit (affectée par l'*InputManager*).

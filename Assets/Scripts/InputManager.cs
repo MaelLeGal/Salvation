@@ -10,6 +10,26 @@ public class InputManager : MonoBehaviour
     private Vector3Int _selection; // tile position for the selection (_selection.z == -1 if no selection)
     private Vector3 _selectionWorld; // world position for the selected tile
 
+    [System.Serializable]
+    public class ConstructEventArgs : System.EventArgs
+    {
+        public enum Type
+        {
+            None,
+            Grass,
+            Neutral,
+            DryGround
+        }
+        public Type type = Type.None;
+
+        public Vector2 pattern = Vector2.one;
+
+        [HideInInspector]
+        public GameObject tile;
+    }
+
+    public static event System.EventHandler<ConstructEventArgs> OnConstruct;
+
     public CorruptionManager CorruptionManager;
     public Transform Tilemap_Building;
     public GameObject TestBuildingPrefab;
@@ -112,6 +132,9 @@ public class InputManager : MonoBehaviour
         // If every check passed, the building can be built
         Instantiate(asset, _selectionWorld + Vector3.up, Quaternion.identity, Tilemap_Building);
         _selectedTile.GetComponent<TileDataContainer>().isOccupied = true;
+
+        b.ConstructEvent.tile = _selectedTile;
+        OnConstruct.Invoke(this, b.ConstructEvent);
     }
 
     private void OnDrawGizmos()

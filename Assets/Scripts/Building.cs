@@ -76,6 +76,10 @@ public class Building : MonoBehaviour
     private int _capacity;
     public int Capacity { get => _capacity; }
 
+    [SerializeField]
+    private InputManager.ConstructEventArgs _constructEvent;
+    public InputManager.ConstructEventArgs ConstructEvent { get => _constructEvent; }
+
     public Building()
     {
         _constructionCosts = new Costs();
@@ -143,4 +147,17 @@ public class Building : MonoBehaviour
         Debug.Log(name + " : I sleep");
     }
 
+    // MAke sur the pattern is composed of odd numbers only
+    private void OnValidate()
+    {
+        if (_constructEvent.pattern.x % 2 == 0)
+            _constructEvent.pattern.x--;
+        if (_constructEvent.pattern.y % 2 == 0)
+            _constructEvent.pattern.y--;
+
+        if (_constructEvent.pattern.x <= 0)
+            _constructEvent.pattern.x = 1;
+        if (_constructEvent.pattern.y <= 0)
+            _constructEvent.pattern.y = 1;
+    }
 }
