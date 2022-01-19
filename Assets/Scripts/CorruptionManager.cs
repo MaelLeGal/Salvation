@@ -215,6 +215,11 @@ public class CorruptionManager : MonoBehaviour
         InputManager.OnConstruct += ConstructionEvent;
     }
 
+    private void OnDisable()
+    {
+        InputManager.OnConstruct -= ConstructionEvent;
+    }
+
     private void ConstructionEvent(object sender, InputManager.ConstructEventArgs e)
     {
         Debug.Log("CONSTRUCT EVENT, Type : " + e.type + ", Radius : " + e.radius);
