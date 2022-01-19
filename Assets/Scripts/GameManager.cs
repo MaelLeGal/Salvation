@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.Events;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
@@ -16,6 +17,11 @@ public class GameManager : MonoBehaviour
      * The duration time of the game in minute
      * */
     public float timerTime = 15;
+
+    /*
+     * The text diplaying the timer
+     * */
+    public TMP_Text timerText;
 
     /*
      * The time scaling factor
@@ -43,11 +49,16 @@ public class GameManager : MonoBehaviour
 
         corruptionManager.EndGameEvent = EndGameEvent;
         corruptionManager.maxTimer = timerTime;
+
+        timerText.text = timerTime+":00";
+        timerTime *= 60;
     }
 
     // Update is called once per frame
     void Update()
     {
+        timerTime = timerTime - Time.deltaTime;
+        Debug.Log(timerTime/60);
     }
 
     /*

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.UI;
 
 public class InputManager : MonoBehaviour
 {
@@ -112,6 +113,18 @@ public class InputManager : MonoBehaviour
         // If every check passed, the building can be built
         Instantiate(asset, _selectionWorld + Vector3.up, Quaternion.identity, Tilemap_Building);
         _selectedTile.GetComponent<TileDataContainer>().isOccupied = true;
+    }
+
+    public void DisplayPanel(GameObject panel)
+    {
+        if (panel.active)
+        {
+            panel.SetActive(false);
+        }
+        else
+        {
+            panel.SetActive(true);
+        }
     }
 
     private void OnDrawGizmos()
