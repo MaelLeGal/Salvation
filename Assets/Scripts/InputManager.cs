@@ -20,8 +20,10 @@ public class InputManager : MonoBehaviour
             Neutral,
             DryGround
         }
+        [Tooltip("Tile type in which neighbors will be changed into (None : no changes)")]
         public Type type;
 
+        [Tooltip("Radius of the changing tiles, around the building")]
         public float radius;
 
         [HideInInspector]

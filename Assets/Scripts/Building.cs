@@ -13,11 +13,13 @@ public class Building : MonoBehaviour
         public class Cost
         {
             [SerializeField]
+            [Tooltip("Resource needed")]
             private Resource.ResourceType _resource;
             public Resource.ResourceType Resource
             { get => _resource; }
 
             [SerializeField]
+            [Tooltip("Amount to pay/produce in the given resource")]
             private float _price;
             public float Price
             { get => _price; }
@@ -48,35 +50,51 @@ public class Building : MonoBehaviour
 
     private bool _running;
 
+    [Header("Placeability")]
+
     [SerializeField]
+    [Tooltip("Is this building placeable on grass tiles ?")]
     private bool _placeableOnGrass = true;
     public bool PlaceableOnGrass { get => _placeableOnGrass; }
 
     [SerializeField]
+    [Tooltip("Is this building placeable on neutral tiles ?")]
     private bool _placeableOnNeutral;
     public bool PlaceableOnNeutral { get => _placeableOnNeutral; }
 
     [SerializeField]
+    [Tooltip("Is this building placeable on corrupted tiles ?")]
     private bool _placeableOnDryGround;
     public bool PlaceableOnDryGround { get => _placeableOnDryGround; }
 
+    [Header("Costs")]
+
     [SerializeField]
+    [Tooltip("Cost for construction")]
     private Costs _constructionCosts;
     public Costs ConstructionCosts { get => _constructionCosts; }
 
     [SerializeField]
+    [Tooltip("Cost per tick")]
     private Costs _tickCosts;
     public Costs TickCosts { get => _tickCosts; }
 
     [SerializeField]
+    [Tooltip("Production per tick")]
     private Costs _tickProductions;
     public Costs TickProductions { get => _tickProductions; }
 
+    [Header("Capacity (WIP)")]
+
     [SerializeField]
+    [Tooltip("Max capacity (in people) of the building")]
     private int _capacity;
     public int Capacity { get => _capacity; }
 
+    [Header("Construction Event")]
+
     [SerializeField]
+    [Tooltip("Event on construction")]
     private InputManager.ConstructEventArgs _constructEvent;
     public InputManager.ConstructEventArgs ConstructEvent { get => _constructEvent; }
 
