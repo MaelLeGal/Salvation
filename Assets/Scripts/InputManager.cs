@@ -64,24 +64,52 @@ public class InputManager : MonoBehaviour
 
     public void Construct(GameObject asset)
     {
+        Building b = asset.GetComponent<Building>();
+
+        // No currently selected tile
         if (_selection.z == -1)
         {
             Debug.LogWarning(name + " : Il m'est impossible de construire un bâtiment ici, aucune case n'est sélectionnée ! " + _selection);
             return;
         }
 
-        if (_selectedTile.name != "Grass")
+        // Check if the building is placable on this tile
+        switch (_selectedTile.name)
         {
-            Debug.LogWarning(name + " : Il m'est impossible de construire un bâtiment ici, la case n'est pas de l'herbe ! " + _selection);
-            return;
+            default:
+            case "Grass":
+                if (!b.PlaceableOnGrass)
+                {
+                    Debug.LogWarning(name + " : Il m'est impossible de construire ce bâtiment ici ! " + _selection);
+                    return;
+                }
+                break;
+
+            case "Neutral":
+                if (!b.PlaceableOnNeutral)
+                {
+                    Debug.LogWarning(name + " : Il m'est impossible de construire ce bâtiment ici ! " + _selection);
+                    return;
+                }
+                break;
+
+            case "Dry_Ground":
+                if (!b.PlaceableOnDryGround)
+                {
+                    Debug.LogWarning(name + " : Il m'est impossible de construire ce bâtiment ici ! " + _selection);
+                    return;
+                }
+                break;
         }
 
+        // Check if the tile is already occupied
         if (_selectedTile.GetComponent<TileDataContainer>().isOccupied)
         {
             Debug.LogWarning(name + " : Il m'est impossible de construire un bâtiment ici, la case est déjà occupée ! " + _selection);
             return;
         }
 
+        // If every check passed, the building can be built
         Instantiate(asset, _selectionWorld + Vector3.up, Quaternion.identity, Tilemap_Building);
         _selectedTile.GetComponent<TileDataContainer>().isOccupied = true;
     }

@@ -5,6 +5,13 @@
 Le système de tick (*Ticking System*) est le système temporel utilisé par le jeu.
 Le système est modulable, c'est à dire qu'on peut définir le nombre de secondes entre chaque tick pour accélérer ou ralentir le jeu.
 
+## Placement des bâtiments
+
+Un bâtiment contient 3 booléens définissant s'il peut ou non être prosé sur un certain type de case :
+- Plaçable sur l'herbe (*PlaceableOnGrass*) : le bâtiment peut être construit sur l'herbe (le terrain allié).
+- Plaçable sur terrain neutre (*PlaceableOnNeutral*) : le bâtiment peut être construit sur terrain neutre.
+- Plaçable sur terrain corrompu (*PlaceableOnDryGround*) : le bâtiment peut être construit sur terrain corrompu (le terrain ennemi).
+
 ## Coûts et Ressources
 
 Un bâtiment peut contenir 3 différents types de coûts :
@@ -33,7 +40,7 @@ Une fois le prefab créé, entrer dans sa fenêtre d'édition en double cliquant des
 Il suffit maintenant de lui indiquer qu'il est un bâtiment, pour ce faire on va lui ajouter un nouveau composant :  
 **Add Component > Building**
 
-Le composant *Building* vous permet de configurer les différents coûts de ce bâtiment.
+Le composant *Building* vous permet de configurer les différents paramètres de ce bâtiment.
 
 Pour ajouter un bouton créant ce nouveau bâtiment, il faut se rendre dans l'objet *Canvas* et y créer un nouveau bouton :
 **Click droit sur Canvas > UI > Button** et nommer ce bouton.

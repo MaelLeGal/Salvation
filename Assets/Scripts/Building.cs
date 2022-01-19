@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Building : MonoBehaviour
@@ -48,19 +49,31 @@ public class Building : MonoBehaviour
     private bool _running;
 
     [SerializeField]
-    protected Costs _constructionCosts;
+    private bool _placeableOnGrass = true;
+    public bool PlaceableOnGrass { get => _placeableOnGrass; }
+
+    [SerializeField]
+    private bool _placeableOnNeutral;
+    public bool PlaceableOnNeutral { get => _placeableOnNeutral; }
+
+    [SerializeField]
+    private bool _placeableOnDryGround;
+    public bool PlaceableOnDryGround { get => _placeableOnDryGround; }
+
+    [SerializeField]
+    private Costs _constructionCosts;
     public Costs ConstructionCosts { get => _constructionCosts; }
 
     [SerializeField]
-    protected Costs _tickCosts;
+    private Costs _tickCosts;
     public Costs TickCosts { get => _tickCosts; }
 
     [SerializeField]
-    protected Costs _tickProductions;
+    private Costs _tickProductions;
     public Costs TickProductions { get => _tickProductions; }
 
     [SerializeField]
-    protected int _capacity;
+    private int _capacity;
     public int Capacity { get => _capacity; }
 
     public Building()
