@@ -39,6 +39,12 @@ public class GameManager : MonoBehaviour
      * */
     private UnityEvent EndGameEvent;
 
+    private bool end = false;
+
+    public GameObject endPopUp;
+    public GameObject playerScoreText;
+    public GameObject corruptionScoreText;
+
     /*
      * Initialize the end game event and pass values to the corruption manager
      * */
@@ -57,8 +63,20 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        timerTime = timerTime - Time.deltaTime;
-        Debug.Log(timerTime/60);
+        if (timerTime <= 0 && !end)
+        {
+            EndGameEvent.Invoke();
+            end = true;
+        }
+        else
+        {
+            int minutes = Mathf.FloorToInt(timerTime / 60);
+            int secondes = Mathf.FloorToInt(timerTime % 60);
+            timerTime -= Time.deltaTime;
+
+            timerText.text = secondes < 10 ? minutes + ":0" + secondes : minutes + ":" + secondes;
+        }
+        
     }
 
     /*
@@ -96,7 +114,13 @@ public class GameManager : MonoBehaviour
         Debug.Log(scores.Item1);
         Debug.Log(scores.Item2);
         Debug.Log("END !!!");
-        Time.timeScale = timeScale;
+        Time.timeScale = 0;
+
+        endPopUp.SetActive(true);
+
+        playerScoreText.GetComponent<TextMeshProUGUI>().text += "\n" + scores.Item1;
+        corruptionScoreText.GetComponent<TextMeshProUGUI>().text += "\n"+scores.Item2;
+
     }
 
     private void OnValidate()
