@@ -27,7 +27,7 @@ public class InputManager : MonoBehaviour
         public float radius;
 
         [HideInInspector]
-        public GameObject tile;
+        public Vector2 position;
     }
 
     public static event System.EventHandler<ConstructEventArgs> OnConstruct;
@@ -84,9 +84,9 @@ public class InputManager : MonoBehaviour
         }
     }
 
-    public void Construct(GameObject asset)
+    public void Construct(string filename)
     {
-        Building b = asset.GetComponent<Building>();
+        BuildingData b = JsonUtility.FromJson<BuildingData>(System.IO.File.ReadAllText("Assets/Resources/JSON/" + filename + ".json"));
 
         // No currently selected tile
         if (_selection.z == -1)
@@ -132,10 +132,11 @@ public class InputManager : MonoBehaviour
         }
 
         // If every check passed, the building can be built
-        Instantiate(asset, _selectionWorld + Vector3.up, Quaternion.identity, Tilemap_Building);
+        GameObject go = Instantiate(Resources.Load<GameObject>("Buildings/" + b.Name), _selectionWorld + Vector3.up, Quaternion.identity, Tilemap_Building);
+        go.GetComponent<Building>().LoadData(b); //Load data from the JSON file into the building
         _selectedTile.GetComponent<TileDataContainer>().isOccupied = true;
 
-        b.ConstructEvent.tile = _selectedTile;
+        b.ConstructEvent.position = new Vector2(_selection.x + .5f, _selection.y + .5f);
         OnConstruct.Invoke(this, b.ConstructEvent);
     }
 

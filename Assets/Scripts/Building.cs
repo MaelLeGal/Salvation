@@ -1,7 +1,7 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class Building : MonoBehaviour
 {
 
@@ -48,54 +48,54 @@ public class Building : MonoBehaviour
         }
     }
 
-    private bool _running;
+    protected bool _running;
 
     [Header("Placeability")]
 
     [SerializeField]
     [Tooltip("Is this building placeable on grass tiles ?")]
-    private bool _placeableOnGrass = true;
+    protected bool _placeableOnGrass = true;
     public bool PlaceableOnGrass { get => _placeableOnGrass; }
 
     [SerializeField]
     [Tooltip("Is this building placeable on neutral tiles ?")]
-    private bool _placeableOnNeutral;
+    protected bool _placeableOnNeutral;
     public bool PlaceableOnNeutral { get => _placeableOnNeutral; }
 
     [SerializeField]
     [Tooltip("Is this building placeable on corrupted tiles ?")]
-    private bool _placeableOnDryGround;
+    protected bool _placeableOnDryGround;
     public bool PlaceableOnDryGround { get => _placeableOnDryGround; }
 
     [Header("Costs")]
 
     [SerializeField]
     [Tooltip("Cost for construction")]
-    private Costs _constructionCosts;
+    protected Costs _constructionCosts;
     public Costs ConstructionCosts { get => _constructionCosts; }
 
     [SerializeField]
     [Tooltip("Cost per tick")]
-    private Costs _tickCosts;
+    protected Costs _tickCosts;
     public Costs TickCosts { get => _tickCosts; }
 
     [SerializeField]
     [Tooltip("Production per tick")]
-    private Costs _tickProductions;
+    protected Costs _tickProductions;
     public Costs TickProductions { get => _tickProductions; }
 
     [Header("Capacity (WIP)")]
 
     [SerializeField]
     [Tooltip("Max capacity (in people) of the building")]
-    private int _capacity;
+    protected int _capacity;
     public int Capacity { get => _capacity; }
 
     [Header("Construction Event")]
 
     [SerializeField]
     [Tooltip("Event on construction")]
-    private InputManager.ConstructEventArgs _constructEvent;
+    protected InputManager.ConstructEventArgs _constructEvent;
     public InputManager.ConstructEventArgs ConstructEvent { get => _constructEvent; }
 
     public Building()
@@ -121,6 +121,9 @@ public class Building : MonoBehaviour
         foreach (Costs.Cost c in _constructionCosts)
             ResourceManager.GetInstance().Consume(c.Resource, c.Price);
 
+        Debug.Log(TickingSystem.GetInstance());
+        Debug.Log(this);
+        Debug.Log("I LIVE");
         TickingSystem.GetInstance().AddBuilding(this);
 
         Debug.Log(name + " : Construction");
@@ -163,5 +166,20 @@ public class Building : MonoBehaviour
         _running = false;
 
         Debug.Log(name + " : I sleep");
+    }
+
+    public void LoadData(BuildingData bs)
+    {
+        _placeableOnGrass = bs.PlaceableOnGrass;
+        _placeableOnNeutral = bs.PlaceableOnNeutral;
+        _placeableOnDryGround = bs.PlaceableOnDryGround;
+
+        _constructionCosts = bs.ConstructionCosts;
+        _tickCosts = bs.TickCosts;
+        _tickProductions = bs.TickProductions;
+
+        _capacity = bs.Capacity;
+
+        _constructEvent = bs.ConstructEvent;
     }
 }

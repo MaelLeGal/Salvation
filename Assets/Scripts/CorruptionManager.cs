@@ -224,7 +224,7 @@ public class CorruptionManager : MonoBehaviour
     {
         Debug.Log("CONSTRUCT EVENT, Type : " + e.type + ", Radius : " + e.radius);
 
-        Collider[] tiles = Physics.OverlapSphere(e.tile.transform.position, e.radius);
+        Collider[] tiles = Physics.OverlapSphere(e.position, e.radius);
 
         foreach (Collider tile in tiles)
         {

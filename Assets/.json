@@ -1,0 +1,1 @@
+{"_placeableOnGrass":true,"_placeableOnNeutral":false,"_placeableOnDryGround":false,"_constructionCosts":{"_costs":[{"_resource":1,"_price":1.0}]},"_tickCosts":{"_costs":[{"_resource":0,"_price":1.0}]},"_tickProductions":{"_costs":[{"_resource":2,"_price":1.0}]},"_capacity":5,"_constructEvent":{"type":1,"radius":10.0,"position":{"x":0,"y":0}}}
