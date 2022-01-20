@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -36,6 +35,18 @@ public class CorruptionManager : MonoBehaviour
      * */
     [SerializeField]
     private Material corruptionMaterial;
+
+    /*
+     * The material used to represent the neutral grounds;
+     * */
+    [SerializeField]
+    private Material neutralMaterial;
+
+    /*
+     * The material used to represent the grass;
+     * */
+    [SerializeField]
+    private Material grassMaterial;
 
     /*
      * A list of corrupted tiles;
@@ -197,6 +208,54 @@ public class CorruptionManager : MonoBehaviour
         }
 
         return neigbors;
+    }
+
+    private void OnEnable()
+    {
+        InputManager.OnConstruct += ConstructionEvent;
+    }
+
+    private void OnDisable()
+    {
+        InputManager.OnConstruct -= ConstructionEvent;
+    }
+
+    private void ConstructionEvent(object sender, InputManager.ConstructEventArgs e)
+    {
+        Debug.Log("CONSTRUCT EVENT, Type : " + e.type + ", Radius : " + e.radius);
+
+        Collider[] tiles = Physics.OverlapSphere(e.position, e.radius);
+
+        foreach (Collider tile in tiles)
+        {
+            switch (e.type)
+            {
+                default:
+                case InputManager.ConstructEventArgs.Type.None:
+                    return;
+
+                case InputManager.ConstructEventArgs.Type.Grass:
+                    tile.gameObject.GetComponent<MeshRenderer>().material = grassMaterial;
+                    tile.gameObject.name = "Grass";
+                    tile.gameObject.GetComponent<TileDataContainer>().type = 0;
+                    tile.gameObject.GetComponent<TileDataContainer>().isCorrupted = false;
+                    break;
+
+                case InputManager.ConstructEventArgs.Type.Neutral:
+                    tile.gameObject.GetComponent<MeshRenderer>().material = neutralMaterial;
+                    tile.gameObject.name = "Neutral";
+                    tile.gameObject.GetComponent<TileDataContainer>().type = 1;
+                    tile.gameObject.GetComponent<TileDataContainer>().isCorrupted = false;
+                    break;
+
+                case InputManager.ConstructEventArgs.Type.DryGround:
+                    tile.gameObject.GetComponent<MeshRenderer>().material = corruptionMaterial;
+                    tile.gameObject.name = "Dry_Ground";
+                    tile.gameObject.GetComponent<TileDataContainer>().type = 2;
+                    tile.gameObject.GetComponent<TileDataContainer>().isCorrupted = true;
+                    break;
+            }
+        }
     }
 
 }

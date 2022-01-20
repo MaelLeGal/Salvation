@@ -1,55 +1,114 @@
-# Salvation - Partie Niko
+Ôªø# Salvation - Partie Niko
 
-## SystËme de Tick
+## Syst√®me de Tick
 
-Le systËme de tick (*Ticking System*) est le systËme temporel utilisÈ par le jeu.
-Le systËme est modulable, c'est ‡ dire qu'on peut dÈfinir le nombre de secondes entre chaque tick pour accÈlÈrer ou ralentir le jeu.
+Le syst√®me de tick (*Ticking System*) est le syst√®me temporel utilis√© par le jeu.
+Le syst√®me est modulable, c'est √† dire qu'on peut d√©finir le nombre de secondes entre chaque tick pour acc√©l√©rer ou ralentir le jeu.
 
-## Placement des b‚timents
+## Placement des b√¢timents
 
-Un b‚timent contient 3 boolÈens dÈfinissant s'il peut ou non Ítre prosÈ sur un certain type de case :
-- PlaÁable sur l'herbe (*PlaceableOnGrass*) : le b‚timent peut Ítre construit sur l'herbe (le terrain alliÈ).
-- PlaÁable sur terrain neutre (*PlaceableOnNeutral*) : le b‚timent peut Ítre construit sur terrain neutre.
-- PlaÁable sur terrain corrompu (*PlaceableOnDryGround*) : le b‚timent peut Ítre construit sur terrain corrompu (le terrain ennemi).
+Un b√¢timent contient 3 bool√©ens d√©finissant s'il peut ou non √™tre pros√© sur un certain type de case :
+- Pla√ßable sur l'herbe (*PlaceableOnGrass*) : le b√¢timent peut √™tre construit sur l'herbe (le terrain alli√©).
+- Pla√ßable sur terrain neutre (*PlaceableOnNeutral*) : le b√¢timent peut √™tre construit sur terrain neutre.
+- Pla√ßable sur terrain corrompu (*PlaceableOnDryGround*) : le b√¢timent peut √™tre construit sur terrain corrompu (le terrain ennemi).
 
-## Co˚ts et Ressources
+## Co√ªts et Ressources
 
-Un b‚timent peut contenir 3 diffÈrents types de co˚ts :
-- Co˚t de construction (*Construction Costs*) : ce co˚t intervient lors de la construction du b‚timent.
-- Co˚t par tick (*Tick Costs*) : ce co˚t intervient ‡ chaque tick du jeu.
-- Production par tick (*Tick Productions*) : cette production intervient ‡ chaque tick du jeu.
+Un b√¢timent peut contenir 3 diff√©rents types de co√ªts :
+- Co√ªt de construction (*Construction Costs*) : ce co√ªt intervient lors de la construction du b√¢timent.
+- Co√ªt par tick (*Tick Costs*) : ce co√ªt intervient √† chaque tick du jeu.
+- Production par tick (*Tick Productions*) : cette production intervient √† chaque tick du jeu.
 
-Chaque co˚t peut contenir une ‡ plusieurs ressources parmis les suivantes dÈfinies dans Salvation :
-- Population (*People*) : dÈfini le nombre de personnes ‡ disposition.
-- Energie (*Energy*) : dÈfini la quantitÈ d'Ènergie disponible.
-- Nourriture (*Food*) : dÈfini la quantitÈ de nourriture ‡ disposition.
+Chaque co√ªt peut contenir une √† plusieurs ressources parmis les suivantes d√©finies dans Salvation :
+- Population (*People*) : d√©fini le nombre de personnes √† disposition.
+- Energie (*Energy*) : d√©fini la quantit√© d'√©nergie disponible.
+- Nourriture (*Food*) : d√©fini la quantit√© de nourriture √† disposition.
 
-## CapacitÈ d'un b‚timent (WIP)
+## Capacit√© d'un b√¢timent (WIP)
 
-La capacitÈ d'un b‚timent dÈtermine le nombre de personnes pouvant y Ítre affectÈ.
+La capacit√© d'un b√¢timent d√©termine le nombre de personnes pouvant y √™tre affect√©.
 
-Plus un b‚timent contient de personnes, mieux il fonctionnera. **(?)**  
-Un b‚timent ne contenant aucune personne sera dÈsertÈ et donc ne produira et ne co˚tera rien. **(?)**
+Plus un b√¢timent contient de personnes, mieux il fonctionnera. **(?)**  
+Un b√¢timent ne contenant aucune personne sera d√©sert√© et donc ne produira et ne co√ªtera rien. **(?)**
 
-## CrÈation d'un nouveau b‚timent dans l'Èditeur
+## Cr√©ation d'un nouveau b√¢timent dans l'√©diteur
 
-Pour crÈer un nouveau b‚timent il faut commencer par crÈer un nouveau prefab dans les assets.  
-**Clic droit dans le dossier *Assets* > Create > Prefab** puis lui donner le nom du nouveau b‚timent.
+### Le prefab
 
-Une fois le prefab crÈÈ, entrer dans sa fenÍtre d'Èdition en double cliquant dessus, vous avez maintenant accËs au prefab.  
-Il suffit maintenant de lui indiquer qu'il est un b‚timent, pour ce faire on va lui ajouter un nouveau composant :  
-**Add Component > Building**
+Pour cr√©er un nouveau b√¢timent il faut commencer par cr√©er un nouveau prefab dans les assets des buildings.  
+**Clic droit dans le dossier *Assets/Resources/Buildings* > Create > Prefab** puis lui donner le nom du nouveau b√¢timent.
 
-Le composant *Building* vous permet de configurer les diffÈrents paramËtres de ce b‚timent.
+**‚ö†Ô∏è Ce nom doit √™tre le m√™me pour le prefab, le fichier JSON et la string pass√©e au bouton !**
 
-Pour ajouter un bouton crÈant ce nouveau b‚timent, il faut se rendre dans l'objet *Canvas* et y crÈer un nouveau bouton :
+### Le JSON
+
+Nous allons maintenant passer √† la cr√©ation du fichier JSON d√©finissant ce b√¢timent.  
+Pour ce faire il s'agira de cr√©er un objet vide dans la sc√®ne :  
+**Create Empty**  
+Puis on lui affecte le composant *JSONBuildingCreator* :  
+**Add Component > JSONBuildingCreator**
+
+Ce nouvel objet nous permet de configurer un building.
+Une fois fait il suffit de cliquer sur le "bouton" *Save To JSON* qui cr√©era le fichier JSON correspondant au b√¢timent configur√© dans le dossier *Assets/Resources/JSON/[Name]*.
+
+**‚ö†Ô∏è Ce nom doit √™tre le m√™me pour le prefab, le fichier JSON et la string pass√©e au bouton !**
+
+Cet objet peut maintenant √™tre supprim√© de la sc√®ne, ou gard√© pour cr√©er d'autres b√¢timents.
+En effet cet objet ne sert √† rien d'autre que de cr√©er des JSON :).
+
+### Le bouton
+
+Pour ajouter un bouton cr√©ant ce nouveau b√¢timent, il faut se rendre dans l'objet *Canvas* et y cr√©er un nouveau bouton :
 **Click droit sur Canvas > UI > Button** et nommer ce bouton.
 
-Le texte du bouton est contenu en enfant du bouton crÈÈ, quand ‡ lui le bouton contient un composant *Button*.
-Ce composant *Button* contient le champs *On Click ()* qui nous intÈresse.  
-Clicker sur le **+** pour ajouter un nouvel appel, laisser *Runtime Only*, l'objet ‡ appeler est l'*Input Manager* de la **Scene** et la fonction est :  
-**InputManager > Construct (GameObject)**
+Le texte du bouton est contenu en enfant du bouton cr√©√©, quand √† lui le bouton contient un composant *Button*.
+Ce composant *Button* contient le champs *On Click ()* qui nous int√©resse.  
+Clicker sur le **+** pour ajouter un nouvel appel, laisser *Runtime Only*, l'objet √† appeler est l'*Input Manager* de la **Scene** et la fonction est :  
+**InputManager > Construct (string)**
 
-Un nouveau champs est apparu contenant le *GameObject* ‡ passer en paramËtre, il faut donc sÈlectionner le b‚timent crÈÈ dans l'onglet **Assets**.
+Un nouveau champs est apparu contenant la *string* √† passer en param√®tre, il faut donc entrer le nom du b√¢timent.
 
-Bravo, vous avez crÈÈ un nouveau b‚timent !
+**‚ö†Ô∏è Ce nom doit √™tre le m√™me pour le prefab, le fichier JSON et la string pass√©e au bouton !**
+
+Bravo, vous avez cr√©√© un nouveau b√¢timent !
+
+## Ev√®nement de cr√©ation de b√¢timents sp√©ciaux
+
+Certains b√¢timents sont sp√©ciaux, au lieu de consommer/produire des ressources par tick ils vont uniquement d√©clencher un √©v√®nement a leur construction.
+
+Exemple : on consid√®re le b√¢timent *Puit*, au moment de la cr√©ation du *Puit* les cases adjacentes vont devenir de l'herbe.
+
+Pour ce faire j'ai utilis√© le syst√®me d'√©v√®nements int√©gr√© dans C#.  
+En effet le singleton *InputManager* d√©clenche l'√©v√®nement *OnConstruct* lors de la cr√©ation d'un b√¢timent avec comme argument une structure *ConstructEventArgs*.  
+
+### ConstructEventArgs
+
+Cette structure contient diff√©rentes informations importante pour l'√©v√®nement :
+- Type (*Type*) : d√©fini ce qu'il se passe lors de la cr√©ation d'un b√¢timent.
+  - Aucun (*None*) : la construction n'aura aucun effet particulier.
+  - Herbe (*Grass*) : change des cases en herbe.
+  - Terrain neutre (*Neutral*) : change des cases en terrain neutre.
+  - Terrain corrompu (*DryGround*) : change des cases en terrain corrompu.
+- Rayon (*Radius*) : d√©fini le rayon de changement des cases.
+- Position (*Position*) : r√©f√©rence la position sur laquelle le b√¢timent est construit (affect√©e par l'*InputManager*).
+
+## Pipeline (Bouton -> Cr√©ation)
+
+Au moment de la pression d'un bouton correspondant √† un b√¢timent :
+
+**Bouton :**  
+Le bouton press√© appelle la fonction *Construct* de l'*InputManager* avce comme argument le nom du b√¢timent.
+
+**InputManager :**  
+La fonction *Construct()* commence par charger le JSON correspondant au b√¢timent √† cr√©er.  
+Il v√©rifie ensuite une s√©rie de conditions d√©terminant si le b√¢timent est pla√ßable ou non.  
+Si c'est le cas, le prefab correspondant au b√¢timent est instanti√©.  
+Il se charge aussi d'ajouter un composant *Building* au prefab en y chargeant les donn√©es du JSON.  
+La case o√π est construite le b√¢timent est d√©termin√©e comme occup√©e (*isOccupied = true*).  
+Enfin la position de construction est ajout√©e au *ConstructEventArgs* du b√¢timent et celui-ci est propag√© sous forme d'√©v√®nement.
+
+**CorruptionManager :**  
+Le *CorruptionManager* r√©ceptionne l'√©v√®nement avec sa fonction *ConstructionEvent* et modifie le terrain comme indiqu√© dans le *ConstructEventArgs*.
+
+**Fin**  
+Le b√¢timent r√©agit maintenant au jeu en ex√©cutant ses productions et en payant ses co√ªts.

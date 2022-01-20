@@ -11,6 +11,28 @@ public class InputManager : MonoBehaviour
     private Vector3Int _selection; // tile position for the selection (_selection.z == -1 if no selection)
     private Vector3 _selectionWorld; // world position for the selected tile
 
+    [System.Serializable]
+    public class ConstructEventArgs : System.EventArgs
+    {
+        public enum Type
+        {
+            None,
+            Grass,
+            Neutral,
+            DryGround
+        }
+        [Tooltip("Tile type in which neighbors will be changed into (None : no changes)")]
+        public Type type;
+
+        [Tooltip("Radius of the changing tiles, around the building")]
+        public float radius;
+
+        [HideInInspector]
+        public Vector3 position;
+    }
+
+    public static event System.EventHandler<ConstructEventArgs> OnConstruct;
+
     public CorruptionManager CorruptionManager;
     public Transform Tilemap_Building;
     public GameObject TestBuildingPrefab;
@@ -63,9 +85,9 @@ public class InputManager : MonoBehaviour
         }
     }
 
-    public void Construct(GameObject asset)
+    public void Construct(string filename)
     {
-        Building b = asset.GetComponent<Building>();
+        BuildingData b = JsonUtility.FromJson<BuildingData>(System.IO.File.ReadAllText("Assets/Resources/JSON/" + filename + ".json"));
 
         // No currently selected tile
         if (_selection.z == -1)
@@ -111,8 +133,13 @@ public class InputManager : MonoBehaviour
         }
 
         // If every check passed, the building can be built
-        Instantiate(asset, _selectionWorld + Vector3.up, Quaternion.identity, Tilemap_Building);
+        GameObject go = Instantiate(Resources.Load<GameObject>("Buildings/" + b.Name), _selectionWorld + Vector3.up, Quaternion.identity, Tilemap_Building);
+        var building = go.AddComponent<Building>();
+        building.LoadData(b); //Load data from the JSON file into the building
         _selectedTile.GetComponent<TileDataContainer>().isOccupied = true;
+
+        b.ConstructEvent.position = _selectionWorld;
+        OnConstruct.Invoke(this, b.ConstructEvent);
     }
 
     public void DisplayPanel(GameObject panel)

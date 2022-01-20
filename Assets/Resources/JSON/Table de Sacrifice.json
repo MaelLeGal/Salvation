@@ -1,0 +1,1 @@
+{"Name":"Table de Sacrifice","PlaceableOnGrass":false,"PlaceableOnNeutral":false,"PlaceableOnDryGround":true,"ConstructionCosts":{"_costs":[]},"TickCosts":{"_costs":[]},"TickProductions":{"_costs":[]},"Capacity":0,"ConstructEvent":{"type":3,"radius":3.0,"position":{"x":0,"y":0}}}

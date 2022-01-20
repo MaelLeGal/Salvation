@@ -1,7 +1,7 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class Building : MonoBehaviour
 {
 
@@ -13,11 +13,13 @@ public class Building : MonoBehaviour
         public class Cost
         {
             [SerializeField]
+            [Tooltip("Resource needed")]
             private Resource.ResourceType _resource;
             public Resource.ResourceType Resource
             { get => _resource; }
 
             [SerializeField]
+            [Tooltip("Amount to pay/produce in the given resource")]
             private float _price;
             public float Price
             { get => _price; }
@@ -46,35 +48,55 @@ public class Building : MonoBehaviour
         }
     }
 
-    private bool _running;
+    protected bool _running;
+
+    [Header("Placeability")]
 
     [SerializeField]
-    private bool _placeableOnGrass = true;
+    [Tooltip("Is this building placeable on grass tiles ?")]
+    protected bool _placeableOnGrass = true;
     public bool PlaceableOnGrass { get => _placeableOnGrass; }
 
     [SerializeField]
-    private bool _placeableOnNeutral;
+    [Tooltip("Is this building placeable on neutral tiles ?")]
+    protected bool _placeableOnNeutral;
     public bool PlaceableOnNeutral { get => _placeableOnNeutral; }
 
     [SerializeField]
-    private bool _placeableOnDryGround;
+    [Tooltip("Is this building placeable on corrupted tiles ?")]
+    protected bool _placeableOnDryGround;
     public bool PlaceableOnDryGround { get => _placeableOnDryGround; }
 
+    [Header("Costs")]
+
     [SerializeField]
-    private Costs _constructionCosts;
+    [Tooltip("Cost for construction")]
+    protected Costs _constructionCosts;
     public Costs ConstructionCosts { get => _constructionCosts; }
 
     [SerializeField]
-    private Costs _tickCosts;
+    [Tooltip("Cost per tick")]
+    protected Costs _tickCosts;
     public Costs TickCosts { get => _tickCosts; }
 
     [SerializeField]
-    private Costs _tickProductions;
+    [Tooltip("Production per tick")]
+    protected Costs _tickProductions;
     public Costs TickProductions { get => _tickProductions; }
 
+    [Header("Capacity (WIP)")]
+
     [SerializeField]
-    private int _capacity;
+    [Tooltip("Max capacity (in people) of the building")]
+    protected int _capacity;
     public int Capacity { get => _capacity; }
+
+    [Header("Construction Event")]
+
+    [SerializeField]
+    [Tooltip("Event on construction")]
+    protected InputManager.ConstructEventArgs _constructEvent;
+    public InputManager.ConstructEventArgs ConstructEvent { get => _constructEvent; }
 
     public Building()
     {
@@ -99,6 +121,9 @@ public class Building : MonoBehaviour
         foreach (Costs.Cost c in _constructionCosts)
             ResourceManager.GetInstance().Consume(c.Resource, c.Price);
 
+        Debug.Log(TickingSystem.GetInstance());
+        Debug.Log(this);
+        Debug.Log("I LIVE");
         TickingSystem.GetInstance().AddBuilding(this);
 
         Debug.Log(name + " : Construction");
@@ -143,4 +168,18 @@ public class Building : MonoBehaviour
         Debug.Log(name + " : I sleep");
     }
 
+    public void LoadData(BuildingData bs)
+    {
+        _placeableOnGrass = bs.PlaceableOnGrass;
+        _placeableOnNeutral = bs.PlaceableOnNeutral;
+        _placeableOnDryGround = bs.PlaceableOnDryGround;
+
+        _constructionCosts = bs.ConstructionCosts;
+        _tickCosts = bs.TickCosts;
+        _tickProductions = bs.TickProductions;
+
+        _capacity = bs.Capacity;
+
+        _constructEvent = bs.ConstructEvent;
+    }
 }
