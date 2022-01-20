@@ -38,12 +38,7 @@ Un bâtiment ne contenant aucune personne sera déserté et donc ne produira et 
 Pour créer un nouveau bâtiment il faut commencer par créer un nouveau prefab dans les assets des buildings.  
 **Clic droit dans le dossier *Assets/Resources/Buildings* > Create > Prefab** puis lui donner le nom du nouveau bâtiment.
 
-Une fois le prefab créé, entrer dans sa fenêtre d'édition en double cliquant dessus, vous avez maintenant accès au prefab.  
-Il suffit maintenant de lui indiquer qu'il est un bâtiment, pour ce faire on va lui ajouter un nouveau composant :  
-**Add Component > Building**
-
-Le composant *Building* permettra au bâtiment d'être configuré lors de sa création à partir d'un JSON que nous allons faire.  
-Il est donc inutile de modifier le composant *Building* ici présent.
+**⚠️ Ce nom doit être le même pour le prefab, le fichier JSON et la string passée au bouton !**
 
 ### Le JSON
 
@@ -54,7 +49,9 @@ Puis on lui affecte le composant *JSONBuildingCreator* :
 **Add Component > JSONBuildingCreator**
 
 Ce nouvel objet nous permet de configurer un building.
-Une fois fait il suffit de cliquer sur le "bouton" *Save To JSON* qui créera le fichier JSON correspondant au bâtiment configuré dans le dossier *Assets/Resources/JSON/*.
+Une fois fait il suffit de cliquer sur le "bouton" *Save To JSON* qui créera le fichier JSON correspondant au bâtiment configuré dans le dossier *Assets/Resources/JSON/[Name]*.
+
+**⚠️ Ce nom doit être le même pour le prefab, le fichier JSON et la string passée au bouton !**
 
 Cet objet peut maintenant être supprimé de la scène, ou gardé pour créer d'autres bâtiments.
 En effet cet objet ne sert à rien d'autre que de créer des JSON :).
@@ -71,7 +68,7 @@ Clicker sur le **+** pour ajouter un nouvel appel, laisser *Runtime Only*, l'obj
 
 Un nouveau champs est apparu contenant la *string* à passer en paramètre, il faut donc entrer le nom du bâtiment.
 
-**⚠️ Ce nom doit être le même pour le prefab ainsi que le fichier JSON !**
+**⚠️ Ce nom doit être le même pour le prefab, le fichier JSON et la string passée au bouton !**
 
 Bravo, vous avez créé un nouveau bâtiment !
 
@@ -105,7 +102,8 @@ Le bouton pressé appelle la fonction *Construct* de l'*InputManager* avce comme
 **InputManager :**  
 La fonction *Construct()* commence par charger le JSON correspondant au bâtiment à créer.  
 Il vérifie ensuite une série de conditions déterminant si le bâtiment est plaçable ou non.  
-Si c'est le cas, le prefab correspondant au bâtiment est instantié et les informations du JSON sont chargées dans son composant *Building*.  
+Si c'est le cas, le prefab correspondant au bâtiment est instantié.  
+Il se charge aussi d'ajouter un composant *Building* au prefab en y chargeant les données du JSON.  
 La case où est construite le bâtiment est déterminée comme occupée (*isOccupied = true*).  
 Enfin la position de construction est ajoutée au *ConstructEventArgs* du bâtiment et celui-ci est propagé sous forme d'évènement.
 

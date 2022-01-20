@@ -27,7 +27,7 @@ public class InputManager : MonoBehaviour
         public float radius;
 
         [HideInInspector]
-        public Vector2 position;
+        public Vector3 position;
     }
 
     public static event System.EventHandler<ConstructEventArgs> OnConstruct;
@@ -133,10 +133,11 @@ public class InputManager : MonoBehaviour
 
         // If every check passed, the building can be built
         GameObject go = Instantiate(Resources.Load<GameObject>("Buildings/" + b.Name), _selectionWorld + Vector3.up, Quaternion.identity, Tilemap_Building);
-        go.GetComponent<Building>().LoadData(b); //Load data from the JSON file into the building
+        var building = go.AddComponent<Building>();
+        building.LoadData(b); //Load data from the JSON file into the building
         _selectedTile.GetComponent<TileDataContainer>().isOccupied = true;
 
-        b.ConstructEvent.position = new Vector2(_selection.x + .5f, _selection.y + .5f);
+        b.ConstructEvent.position = _selectionWorld;
         OnConstruct.Invoke(this, b.ConstructEvent);
     }
 
