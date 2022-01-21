@@ -10,6 +10,12 @@ public class InputManager : MonoBehaviour
     private Vector3Int _selection; // tile position for the selection (_selection.z == -1 if no selection)
     private Vector3 _selectionWorld; // world position for the selected tile
 
+    [SerializeField]
+    private Transform _selectionCube;
+
+    [SerializeField]
+    private Transform _hoverCube;
+
     [System.Serializable]
     public class ConstructEventArgs : System.EventArgs
     {
@@ -45,7 +51,7 @@ public class InputManager : MonoBehaviour
 
     private void Update()
     {
-        // Green selection preview
+        // Green hover selection preview
         {
             Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
@@ -56,6 +62,17 @@ public class InputManager : MonoBehaviour
 
                 _tmpSelection = _map.WorldToCell(hit.point);
                 _tmpSelectionWorld = new Vector3(Mathf.Floor(hit.point.x) + 0.5f, 0, Mathf.Floor(hit.point.z) + 0.5f);
+
+                // Displays the hover if not hovering the selection
+                if (_tmpSelection != _selection)
+                    _hoverCube.position = _tmpSelectionWorld;
+                else
+                    _hoverCube.localPosition = Vector3.zero;
+            }
+            else
+            {
+                // No hovered tile
+                _hoverCube.localPosition = Vector3.zero;
             }
         }
 
@@ -71,12 +88,16 @@ public class InputManager : MonoBehaviour
                 _selection = _map.WorldToCell(hit.point);
                 _selectedTile = hit.collider.gameObject;
                 _selectionWorld = new Vector3(Mathf.Floor(hit.point.x) + 0.5f, 0, Mathf.Floor(hit.point.z) + 0.5f);
+
+                _selectionCube.position = _selectionWorld;
             }
         }
         else if (Input.GetMouseButtonDown(1))
         {
             _selection.z = -1;
             _selectedTile = null;
+
+            _selectionCube.localPosition = Vector3.zero;
         }
         else if (Input.GetMouseButtonDown(2))
         {
@@ -139,22 +160,5 @@ public class InputManager : MonoBehaviour
 
         b.ConstructEvent.position = _selectionWorld;
         OnConstruct.Invoke(this, b.ConstructEvent);
-    }
-
-    private void OnDrawGizmos()
-    {
-        // Displays a green box at the cursor location (if it is different than the selected tile location) => hover
-        if (_tmpSelection.z != -1 && _tmpSelection != _selection)
-        {
-            Gizmos.color = new Color(0f, 1f, 0f, 0.5f);
-            Gizmos.DrawCube(_tmpSelectionWorld, Vector3.one * 1.1f);
-        }
-
-        // Displays a red box at the selected tile location
-        if (_selection.z != -1)
-        {
-            Gizmos.color = new Color(1f, 0f, 0f, 0.5f);
-            Gizmos.DrawCube(_selectionWorld, Vector3.one * 1.1f);
-        }
     }
 }
