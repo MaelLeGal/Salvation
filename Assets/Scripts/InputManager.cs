@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
+using TMPro;
 
 public class InputManager : MonoBehaviour
 {
@@ -38,10 +40,18 @@ public class InputManager : MonoBehaviour
     public GameObject TestBuildingPrefab;
     public GameObject TableSacrificePrefab;
 
+    public GameObject BuildingInfoPanel;
+    Dictionary<string,GameObject> BuildingInfoPanelChildren = new Dictionary<string, GameObject>();
+
     private void Start()
     {
         _map = CorruptionManager.Map;
         _selection.z = -1; //no selection
+
+        foreach (Transform child in BuildingInfoPanel.transform)
+        {
+            BuildingInfoPanelChildren.Add(child.name,child.gameObject);
+        }
     }
 
     private void Update()
@@ -142,15 +152,71 @@ public class InputManager : MonoBehaviour
         OnConstruct.Invoke(this, b.ConstructEvent);
     }
 
-    public void DisplayPanel(GameObject panel)
+    public void DisplayPanel(string buildingName)
     {
-        if (panel.active)
+        switch (buildingName)
         {
-            panel.SetActive(false);
-        }
-        else
-        {
-            panel.SetActive(true);
+            case "Moulin":
+                BuildingData b = JsonUtility.FromJson<BuildingData>(System.IO.File.ReadAllText("Assets/Resources/JSON/" + buildingName + ".json"));
+                
+                if(b.Name != null)
+                {
+                    BuildingInfoPanelChildren["Name"].SetActive(true);
+                    BuildingInfoPanelChildren["Name"].GetComponent<TextMeshProUGUI>().text = b.Name;
+                }
+
+                if(b.ConstructionCosts != null)
+                {
+                    foreach (Building.Costs.Cost cost in b.ConstructionCosts)
+                    {
+                        BuildingInfoPanelChildren["ConstructionCosts"].SetActive(true);
+                        BuildingInfoPanelChildren["ConstructionCosts"].GetComponent<TextMeshProUGUI>().text = "Construction Cost : " + cost.Price.ToString();
+                    }
+                }
+                else
+                {
+                    BuildingInfoPanelChildren["ConstructionCosts"].SetActive(false);
+                }
+
+                if (b.TickCosts != null)
+                {
+                    foreach (Building.Costs.Cost cost in b.TickCosts)
+                    {
+                        BuildingInfoPanelChildren["TickCosts"].SetActive(true);
+                        BuildingInfoPanelChildren["TickCosts"].GetComponent<TextMeshProUGUI>().text = "Tick Cost : " + cost.Price.ToString();
+                    }
+                }
+                else
+                {
+                    BuildingInfoPanelChildren["TickCosts"].SetActive(false);
+                }
+
+                if (b.TickProductions != null)
+                {
+                    foreach (Building.Costs.Cost cost in b.TickCosts)
+                    {
+                        BuildingInfoPanelChildren["TickProductions"].SetActive(true);
+                        BuildingInfoPanelChildren["TickProductions"].GetComponent<TextMeshProUGUI>().text = "Tick Production : " + cost.Price.ToString();
+                    }
+                }
+                else
+                {
+                    BuildingInfoPanelChildren["TickProductions"].SetActive(false);
+                }
+
+                BuildingInfoPanelChildren["Capacity"].SetActive(true);
+                BuildingInfoPanelChildren["Capacity"].GetComponent<TextMeshProUGUI>().text = "Capacity : " + b.Capacity;
+
+
+
+
+                //if(b.ConstructionCosts)
+
+
+                BuildingInfoPanel.SetActive(!BuildingInfoPanel.activeSelf);
+                break;
+            default:
+                break;
         }
     }
 
