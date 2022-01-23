@@ -152,7 +152,12 @@ public class InputManager : MonoBehaviour
         OnConstruct.Invoke(this, b.ConstructEvent);
     }
 
-    public void DisplayPanel(string buildingName)
+    public void DisplayPanel(GameObject panel)
+    {
+        panel.SetActive(!panel.activeInHierarchy);
+    }
+
+    public void DisplayBuildingInfoPanel(string buildingName)
     {
         switch (buildingName)
         {
