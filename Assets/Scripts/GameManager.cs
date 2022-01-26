@@ -63,7 +63,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (timerTime <= 0 && !end)
+        if (timerTime <= 1 && !end)
         {
             EndGameEvent.Invoke();
             end = true;
@@ -72,9 +72,8 @@ public class GameManager : MonoBehaviour
         {
             int minutes = Mathf.FloorToInt(timerTime / 60);
             int secondes = Mathf.FloorToInt(timerTime % 60);
-            timerTime -= Time.deltaTime;
-
             timerText.text = secondes < 10 ? minutes + ":0" + secondes : minutes + ":" + secondes;
+            timerTime -= Time.deltaTime;
         }
         
     }

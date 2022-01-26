@@ -50,7 +50,10 @@ public class InputManager : MonoBehaviour
 
         foreach (Transform child in BuildingInfoPanel.transform)
         {
-            BuildingInfoPanelChildren.Add(child.name,child.gameObject);
+            foreach (Transform childOfChild in child.transform)
+            {
+                BuildingInfoPanelChildren.Add(childOfChild.name, childOfChild.gameObject);
+            }
         }
     }
 
@@ -159,69 +162,121 @@ public class InputManager : MonoBehaviour
 
     public void DisplayBuildingInfoPanel(string buildingName)
     {
-        switch (buildingName)
+        try
         {
-            case "Moulin":
-                BuildingData b = JsonUtility.FromJson<BuildingData>(System.IO.File.ReadAllText("Assets/Resources/JSON/" + buildingName + ".json"));
-                
-                if(b.Name != null)
-                {
-                    BuildingInfoPanelChildren["Name"].SetActive(true);
-                    BuildingInfoPanelChildren["Name"].GetComponent<TextMeshProUGUI>().text = b.Name;
-                }
-
-                if(b.ConstructionCosts != null)
-                {
-                    foreach (Building.Costs.Cost cost in b.ConstructionCosts)
+            BuildingData b = JsonUtility.FromJson<BuildingData>(System.IO.File.ReadAllText("Assets/Resources/JSON/" + buildingName + ".json"));
+            switch (buildingName)
+            {
+                case "Moulin":
+                    if (b.Name != null)
                     {
-                        BuildingInfoPanelChildren["ConstructionCosts"].SetActive(true);
-                        BuildingInfoPanelChildren["ConstructionCosts"].GetComponent<TextMeshProUGUI>().text = "Construction Cost : " + cost.Price.ToString();
+                        BuildingInfoPanelChildren["Name"].SetActive(true);
+                        BuildingInfoPanelChildren["Name"].GetComponent<TextMeshProUGUI>().text = b.Name;
                     }
-                }
-                else
-                {
-                    BuildingInfoPanelChildren["ConstructionCosts"].SetActive(false);
-                }
 
-                if (b.TickCosts != null)
-                {
-                    foreach (Building.Costs.Cost cost in b.TickCosts)
+                    if (b.ConstructionCosts != null)
                     {
-                        BuildingInfoPanelChildren["TickCosts"].SetActive(true);
-                        BuildingInfoPanelChildren["TickCosts"].GetComponent<TextMeshProUGUI>().text = "Tick Cost : " + cost.Price.ToString();
+                        foreach (Building.Costs.Cost cost in b.ConstructionCosts)
+                        {
+                            BuildingInfoPanelChildren["ConstructionCosts"].SetActive(true);
+                            BuildingInfoPanelChildren["ConstructionCosts"].GetComponent<TextMeshProUGUI>().text = "Construction Cost : " + cost.Price.ToString();
+                        }
                     }
-                }
-                else
-                {
-                    BuildingInfoPanelChildren["TickCosts"].SetActive(false);
-                }
-
-                if (b.TickProductions != null)
-                {
-                    foreach (Building.Costs.Cost cost in b.TickCosts)
+                    else
                     {
-                        BuildingInfoPanelChildren["TickProductions"].SetActive(true);
-                        BuildingInfoPanelChildren["TickProductions"].GetComponent<TextMeshProUGUI>().text = "Tick Production : " + cost.Price.ToString();
+                        BuildingInfoPanelChildren["ConstructionCosts"].SetActive(false);
                     }
-                }
-                else
-                {
-                    BuildingInfoPanelChildren["TickProductions"].SetActive(false);
-                }
 
-                BuildingInfoPanelChildren["Capacity"].SetActive(true);
-                BuildingInfoPanelChildren["Capacity"].GetComponent<TextMeshProUGUI>().text = "Capacity : " + b.Capacity;
+                    if (b.TickCosts != null)
+                    {
+                        foreach (Building.Costs.Cost cost in b.TickCosts)
+                        {
+                            BuildingInfoPanelChildren["TickCosts"].SetActive(true);
+                            BuildingInfoPanelChildren["TickCosts"].GetComponent<TextMeshProUGUI>().text = "Tick Cost : " + cost.Price.ToString();
+                        }
+                    }
+                    else
+                    {
+                        BuildingInfoPanelChildren["TickCosts"].SetActive(false);
+                    }
 
+                    if (b.TickProductions != null)
+                    {
+                        foreach (Building.Costs.Cost cost in b.TickCosts)
+                        {
+                            BuildingInfoPanelChildren["TickProductions"].SetActive(true);
+                            BuildingInfoPanelChildren["TickProductions"].GetComponent<TextMeshProUGUI>().text = "Tick Production : " + cost.Price.ToString();
+                        }
+                    }
+                    else
+                    {
+                        BuildingInfoPanelChildren["TickProductions"].SetActive(false);
+                    }
 
+                    BuildingInfoPanelChildren["Capacity"].SetActive(true);
+                    BuildingInfoPanelChildren["Capacity"].GetComponent<TextMeshProUGUI>().text = "Capacity : " + b.Capacity;
 
+                    BuildingInfoPanel.SetActive(!BuildingInfoPanel.activeSelf);
+                    break;
+                case "Table de Sacrifice":
+                    if (b.Name != null)
+                    {
+                        BuildingInfoPanelChildren["Name"].SetActive(true);
+                        BuildingInfoPanelChildren["Name"].GetComponent<TextMeshProUGUI>().text = b.Name;
+                    }
 
-                //if(b.ConstructionCosts)
+                    if (b.ConstructionCosts != null)
+                    {
+                        foreach (Building.Costs.Cost cost in b.ConstructionCosts)
+                        {
+                            BuildingInfoPanelChildren["ConstructionCosts"].SetActive(true);
+                            BuildingInfoPanelChildren["ConstructionCosts"].GetComponent<TextMeshProUGUI>().text = "Construction Cost : " + cost.Price.ToString();
+                        }
+                    }
+                    else
+                    {
+                        BuildingInfoPanelChildren["ConstructionCosts"].SetActive(false);
+                    }
 
+                    if (b.TickCosts != null)
+                    {
+                        foreach (Building.Costs.Cost cost in b.TickCosts)
+                        {
+                            BuildingInfoPanelChildren["TickCosts"].SetActive(true);
+                            BuildingInfoPanelChildren["TickCosts"].GetComponent<TextMeshProUGUI>().text = "Tick Cost : " + cost.Price.ToString();
+                        }
+                    }
+                    else
+                    {
+                        BuildingInfoPanelChildren["TickCosts"].SetActive(false);
+                    }
 
-                BuildingInfoPanel.SetActive(!BuildingInfoPanel.activeSelf);
-                break;
-            default:
-                break;
+                    if (b.TickProductions != null)
+                    {
+                        foreach (Building.Costs.Cost cost in b.TickCosts)
+                        {
+                            BuildingInfoPanelChildren["TickProductions"].SetActive(true);
+                            BuildingInfoPanelChildren["TickProductions"].GetComponent<TextMeshProUGUI>().text = "Tick Production : " + cost.Price.ToString();
+                        }
+                    }
+                    else
+                    {
+                        BuildingInfoPanelChildren["TickProductions"].SetActive(false);
+                    }
+
+                    BuildingInfoPanelChildren["Capacity"].SetActive(true);
+                    BuildingInfoPanelChildren["Capacity"].GetComponent<TextMeshProUGUI>().text = "Capacity : " + b.Capacity;
+
+                    BuildingInfoPanel.SetActive(!BuildingInfoPanel.activeSelf);
+
+                    break;
+                default:
+                    break;
+            }
+        }
+        catch
+        {
+            Debug.Log("No File found");
         }
     }
 
