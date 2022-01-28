@@ -1,0 +1,29 @@
+{
+    "Name": "Wind_Turbine",
+    "PlaceableOnGrass": false,
+    "PlaceableOnNeutral": true,
+    "PlaceableOnDryGround": false,
+    "ConstructionCosts": {
+        "_costs": []
+    },
+    "TickCosts": {
+        "_costs": []
+    },
+    "TickProductions": {
+        "_costs": [{
+            "_resource": 1,
+            "_price": 2.0
+        }]
+    },
+    "Capacity": 0,
+    "Description": "A wind turbine that produce energy",
+    "ConstructEvent": {
+        "type": 0,
+        "radius": 0.0,
+        "position": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        }
+    }
+}

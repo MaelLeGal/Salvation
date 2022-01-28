@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
+using UnityEditor;
 using TMPro;
 
 public class InputManager : MonoBehaviour
@@ -59,6 +60,11 @@ public class InputManager : MonoBehaviour
             foreach (Transform childOfChild in child.transform)
             {
                 BuildingInfoPanelChildren.Add(childOfChild.name, childOfChild.gameObject);
+                
+                foreach(Transform icon in childOfChild.transform)
+                {
+                    BuildingInfoPanelChildren.Add(icon.name, icon.gameObject);
+                }
             }
         }
     }
@@ -186,114 +192,113 @@ public class InputManager : MonoBehaviour
         try
         {
             BuildingData b = JsonUtility.FromJson<BuildingData>(System.IO.File.ReadAllText("Assets/Resources/JSON/" + buildingName + ".json"));
-            switch (buildingName)
+            if (b.Name != null)
             {
-                case "Moulin":
-                    if (b.Name != null)
-                    {
-                        BuildingInfoPanelChildren["Name"].SetActive(true);
-                        BuildingInfoPanelChildren["Name"].GetComponent<TextMeshProUGUI>().text = b.Name;
-                    }
-
-                    if (b.ConstructionCosts != null)
-                    {
-                        foreach (Building.Costs.Cost cost in b.ConstructionCosts)
-                        {
-                            BuildingInfoPanelChildren["ConstructionCosts"].SetActive(true);
-                            BuildingInfoPanelChildren["ConstructionCosts"].GetComponent<TextMeshProUGUI>().text = "Construction Cost : " + cost.Price.ToString();
-                        }
-                    }
-                    else
-                    {
-                        BuildingInfoPanelChildren["ConstructionCosts"].SetActive(false);
-                    }
-
-                    if (b.TickCosts != null)
-                    {
-                        foreach (Building.Costs.Cost cost in b.TickCosts)
-                        {
-                            BuildingInfoPanelChildren["TickCosts"].SetActive(true);
-                            BuildingInfoPanelChildren["TickCosts"].GetComponent<TextMeshProUGUI>().text = "Tick Cost : " + cost.Price.ToString();
-                        }
-                    }
-                    else
-                    {
-                        BuildingInfoPanelChildren["TickCosts"].SetActive(false);
-                    }
-
-                    if (b.TickProductions != null)
-                    {
-                        foreach (Building.Costs.Cost cost in b.TickCosts)
-                        {
-                            BuildingInfoPanelChildren["TickProductions"].SetActive(true);
-                            BuildingInfoPanelChildren["TickProductions"].GetComponent<TextMeshProUGUI>().text = "Tick Production : " + cost.Price.ToString();
-                        }
-                    }
-                    else
-                    {
-                        BuildingInfoPanelChildren["TickProductions"].SetActive(false);
-                    }
-
-                    BuildingInfoPanelChildren["Capacity"].SetActive(true);
-                    BuildingInfoPanelChildren["Capacity"].GetComponent<TextMeshProUGUI>().text = "Capacity : " + b.Capacity;
-
-                    BuildingInfoPanel.SetActive(!BuildingInfoPanel.activeSelf);
-                    break;
-                case "Table de Sacrifice":
-                    if (b.Name != null)
-                    {
-                        BuildingInfoPanelChildren["Name"].SetActive(true);
-                        BuildingInfoPanelChildren["Name"].GetComponent<TextMeshProUGUI>().text = b.Name;
-                    }
-
-                    if (b.ConstructionCosts != null)
-                    {
-                        foreach (Building.Costs.Cost cost in b.ConstructionCosts)
-                        {
-                            BuildingInfoPanelChildren["ConstructionCosts"].SetActive(true);
-                            BuildingInfoPanelChildren["ConstructionCosts"].GetComponent<TextMeshProUGUI>().text = "Construction Cost : " + cost.Price.ToString();
-                        }
-                    }
-                    else
-                    {
-                        BuildingInfoPanelChildren["ConstructionCosts"].SetActive(false);
-                    }
-
-                    if (b.TickCosts != null)
-                    {
-                        foreach (Building.Costs.Cost cost in b.TickCosts)
-                        {
-                            BuildingInfoPanelChildren["TickCosts"].SetActive(true);
-                            BuildingInfoPanelChildren["TickCosts"].GetComponent<TextMeshProUGUI>().text = "Tick Cost : " + cost.Price.ToString();
-                        }
-                    }
-                    else
-                    {
-                        BuildingInfoPanelChildren["TickCosts"].SetActive(false);
-                    }
-
-                    if (b.TickProductions != null)
-                    {
-                        foreach (Building.Costs.Cost cost in b.TickCosts)
-                        {
-                            BuildingInfoPanelChildren["TickProductions"].SetActive(true);
-                            BuildingInfoPanelChildren["TickProductions"].GetComponent<TextMeshProUGUI>().text = "Tick Production : " + cost.Price.ToString();
-                        }
-                    }
-                    else
-                    {
-                        BuildingInfoPanelChildren["TickProductions"].SetActive(false);
-                    }
-
-                    BuildingInfoPanelChildren["Capacity"].SetActive(true);
-                    BuildingInfoPanelChildren["Capacity"].GetComponent<TextMeshProUGUI>().text = "Capacity : " + b.Capacity;
-
-                    BuildingInfoPanel.SetActive(!BuildingInfoPanel.activeSelf);
-
-                    break;
-                default:
-                    break;
+                BuildingInfoPanelChildren["Name"].SetActive(true);
+                BuildingInfoPanelChildren["Name"].GetComponent<TextMeshProUGUI>().text = b.Name;
             }
+
+            if (b.ConstructionCosts.GetEnumerator().MoveNext())
+            {
+                foreach (Building.Costs.Cost cost in b.ConstructionCosts)
+                {
+                    BuildingInfoPanelChildren["ConstructionCosts"].SetActive(true);
+                    BuildingInfoPanelChildren["ConstructionCosts"].GetComponent<TextMeshProUGUI>().text = "Construction Cost : " + cost.Price.ToString();
+
+                    switch (cost.Resource)
+                    {
+                        case Resource.ResourceType.People:
+                            BuildingInfoPanelChildren["ConstructionCostsIcon"].GetComponent<Image>().sprite = (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Sprite/person-logo.jpg", typeof(Sprite));
+                            break;
+                        case Resource.ResourceType.Energy:
+                            BuildingInfoPanelChildren["ConstructionCostsIcon"].GetComponent<Image>().sprite = (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Sprite/lightning-logo.jpg", typeof(Sprite));
+                            break;
+                        case Resource.ResourceType.Food:
+                            BuildingInfoPanelChildren["ConstructionCostsIcon"].GetComponent<Image>().sprite = (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Sprite/fork_logo.png", typeof(Sprite));
+                            break;
+                    }
+                    
+                }
+            }
+            else
+            {
+                BuildingInfoPanelChildren["ConstructionCosts"].SetActive(false);
+            }
+
+            if (b.TickCosts.GetEnumerator().MoveNext())
+            {
+                foreach (Building.Costs.Cost cost in b.TickCosts)
+                {
+                    BuildingInfoPanelChildren["TickCosts"].SetActive(true);
+                    BuildingInfoPanelChildren["TickCosts"].GetComponent<TextMeshProUGUI>().text = "Tick Cost : " + cost.Price.ToString();
+
+                    switch (cost.Resource)
+                    {
+                        case Resource.ResourceType.People:
+                            BuildingInfoPanelChildren["TickCostsIcon"].GetComponent<Image>().sprite = (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Sprite/person-logo.jpg", typeof(Sprite));
+                            break;
+                        case Resource.ResourceType.Energy:
+                            BuildingInfoPanelChildren["TickCostsIcon"].GetComponent<Image>().sprite = (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Sprite/lightning-logo.jpg", typeof(Sprite));
+                            break;
+                        case Resource.ResourceType.Food:
+                            BuildingInfoPanelChildren["TickCostsIcon"].GetComponent<Image>().sprite = (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Sprite/fork_logo.png", typeof(Sprite));
+                            break;
+                    }
+                }
+            }
+            else
+            {
+                BuildingInfoPanelChildren["TickCosts"].SetActive(false);
+            }
+
+            if (b.TickProductions.GetEnumerator().MoveNext())
+            {
+                foreach (Building.Costs.Cost cost in b.TickProductions)
+                {
+                    BuildingInfoPanelChildren["TickProductions"].SetActive(true);
+                    BuildingInfoPanelChildren["TickProductions"].GetComponent<TextMeshProUGUI>().text = "Tick Production : " + cost.Price.ToString();
+
+                    switch (cost.Resource)
+                    {
+                        case Resource.ResourceType.People:
+                            BuildingInfoPanelChildren["TickProductionIcon"].GetComponent<Image>().sprite = (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Sprite/person-logo.jpg", typeof(Sprite));
+                            break;
+                        case Resource.ResourceType.Energy:
+                            BuildingInfoPanelChildren["TickProductionIcon"].GetComponent<Image>().sprite = (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Sprite/lightning-logo.jpg", typeof(Sprite));
+                            break;
+                        case Resource.ResourceType.Food:
+                            BuildingInfoPanelChildren["TickProductionIcon"].GetComponent<Image>().sprite = (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Sprite/fork_logo.png", typeof(Sprite));
+                            break;
+                    }
+                }
+            }
+            else
+            {
+                BuildingInfoPanelChildren["TickProductions"].SetActive(false);
+            }
+
+            if (b.Capacity != 0)
+            {
+                BuildingInfoPanelChildren["Capacity"].SetActive(true);
+                BuildingInfoPanelChildren["Capacity"].GetComponent<TextMeshProUGUI>().text = "Capacity : " + b.Capacity;
+            }
+            else
+            {
+                BuildingInfoPanelChildren["Capacity"].SetActive(false);
+            }
+
+            if(b.Description != null)
+            {
+                BuildingInfoPanelChildren["Description"].SetActive(true);
+                BuildingInfoPanelChildren["Description"].GetComponent<TextMeshProUGUI>().text = b.Description;
+            }
+            else
+            {
+                BuildingInfoPanelChildren["Description"].SetActive(false);
+            }
+
+            BuildingInfoPanel.SetActive(!BuildingInfoPanel.activeSelf);
+
         }
         catch
         {

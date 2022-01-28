@@ -132,7 +132,14 @@ public class CorruptionManager : MonoBehaviour
 
         if (neighborsNotCorrupted.Count > 0)
         {
-            frontNeighborsDictionary.Add(tile, neighborsNotCorrupted);
+            if (frontNeighborsDictionary.ContainsKey(tile))
+            {
+                frontNeighborsDictionary[tile] = neighborsNotCorrupted;
+            }
+            else
+            {
+                frontNeighborsDictionary.Add(tile, neighborsNotCorrupted);
+            }
             return true;
         }
         else
@@ -160,10 +167,13 @@ public class CorruptionManager : MonoBehaviour
 
         foreach(GameObject neigh in neighborsCorrupted)
         {
-            frontNeighborsDictionary[neigh].Remove(tile);
-            if (frontNeighborsDictionary[neigh].Count == 0)
+            if (frontNeighborsDictionary.ContainsKey(neigh))
             {
-                frontNeighborsDictionary.Remove(neigh);
+                frontNeighborsDictionary[neigh].Remove(tile);
+                if (frontNeighborsDictionary[neigh].Count == 0)
+                {
+                    frontNeighborsDictionary.Remove(neigh);
+                }
             }
         }
 
@@ -239,6 +249,7 @@ public class CorruptionManager : MonoBehaviour
                     tile.gameObject.name = "Grass";
                     tile.gameObject.GetComponent<TileDataContainer>().type = 0;
                     tile.gameObject.GetComponent<TileDataContainer>().isCorrupted = false;
+
                     break;
 
                 case InputManager.ConstructEventArgs.Type.Neutral:
@@ -246,6 +257,7 @@ public class CorruptionManager : MonoBehaviour
                     tile.gameObject.name = "Neutral";
                     tile.gameObject.GetComponent<TileDataContainer>().type = 1;
                     tile.gameObject.GetComponent<TileDataContainer>().isCorrupted = false;
+
                     break;
 
                 case InputManager.ConstructEventArgs.Type.DryGround:
@@ -253,6 +265,10 @@ public class CorruptionManager : MonoBehaviour
                     tile.gameObject.name = "Dry_Ground";
                     tile.gameObject.GetComponent<TileDataContainer>().type = 2;
                     tile.gameObject.GetComponent<TileDataContainer>().isCorrupted = true;
+                    if (tile.GetComponent<TileDataContainer>().type == 1)
+                    {
+                        forwardCorruption(tile.gameObject);
+                    }
                     break;
             }
         }

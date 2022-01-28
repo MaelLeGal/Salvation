@@ -1,0 +1,34 @@
+{
+    "Name": "Fertilizer",
+    "PlaceableOnGrass": true,
+    "PlaceableOnNeutral": true,
+    "PlaceableOnDryGround": false,
+    "ConstructionCosts": {
+        "_costs": [{
+            "_resource": 1,
+            "_price": 1.0
+        }]
+    },
+    "TickCosts": {
+        "_costs": [{
+            "_resource": 0,
+            "_price": 1.0
+        }]
+    },
+    "TickProductions": {
+        "_costs": [{
+            "_resource": 2,
+            "_price": 1.0
+        }]
+    },
+    "Capacity": 5,
+    "Description": "A fertilizer that spread nature in a radius of 5 squares",
+    "ConstructEvent": {
+        "type": 1,
+        "radius": 5.0,
+        "position": {
+            "x": 0,
+            "y": 0
+        }
+    }
+}

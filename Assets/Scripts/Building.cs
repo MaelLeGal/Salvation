@@ -91,6 +91,13 @@ public class Building : MonoBehaviour
     protected int _capacity;
     public int Capacity { get => _capacity; }
 
+    [Header("Description")]
+
+    [SerializeField]
+    [Tooltip("Description of the building")]
+    protected string _description;
+    public string Description { get => _description; }
+
     [Header("Construction Event")]
 
     [SerializeField]
@@ -179,6 +186,8 @@ public class Building : MonoBehaviour
         _tickProductions = bs.TickProductions;
 
         _capacity = bs.Capacity;
+
+        _description = bs.Description;
 
         _constructEvent = bs.ConstructEvent;
     }

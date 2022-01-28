@@ -1,0 +1,35 @@
+{
+    "Name": "Farm",
+    "PlaceableOnGrass": true,
+    "PlaceableOnNeutral": false,
+    "PlaceableOnDryGround": false,
+    "ConstructionCosts": {
+        "_costs": [{
+            "_resource": 1,
+            "_price": 1.0
+        }]
+    },
+    "TickCosts": {
+        "_costs": [{
+            "_resource": 0,
+            "_price": 1.0
+        }]
+    },
+    "TickProductions": {
+        "_costs": [{
+            "_resource": 2,
+            "_price": 3.0
+        }]
+    },
+    "Capacity": 0,
+    "Description": "A farm that produce food.",
+    "ConstructEvent": {
+        "type": 0,
+        "radius": 0.0,
+        "position": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        }
+    }
+}

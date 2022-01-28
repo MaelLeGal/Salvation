@@ -13,9 +13,11 @@ public class BuildingData
 
     public int Capacity;
 
+    public string Description;
+
     public InputManager.ConstructEventArgs ConstructEvent;
 
-    public BuildingData(bool pog, bool pon, bool podg, Building.Costs cc, Building.Costs tc, Building.Costs tp, int c, InputManager.ConstructEventArgs ce)
+    public BuildingData(bool pog, bool pon, bool podg, Building.Costs cc, Building.Costs tc, Building.Costs tp, int c, string desc, InputManager.ConstructEventArgs ce)
     {
         PlaceableOnGrass = pog;
         PlaceableOnNeutral = pon;
@@ -26,6 +28,8 @@ public class BuildingData
         TickProductions = tp;
 
         Capacity = c;
+
+        Description = desc;
 
         ConstructEvent = ce;
     }
