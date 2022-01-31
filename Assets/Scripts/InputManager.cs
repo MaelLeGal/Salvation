@@ -204,17 +204,17 @@ public class InputManager : MonoBehaviour
                 {
                     BuildingInfoPanelChildren["ConstructionCosts"].SetActive(true);
                     BuildingInfoPanelChildren["ConstructionCosts"].GetComponent<TextMeshProUGUI>().text = "Construction Cost : " + cost.Price.ToString();
-
+                    Debug.Log(Resources.Load<Sprite>("Sprite/person-logo"));
                     switch (cost.Resource)
                     {
                         case Resource.ResourceType.People:
-                            BuildingInfoPanelChildren["ConstructionCostsIcon"].GetComponent<Image>().sprite = (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Sprite/person-logo.jpg", typeof(Sprite));
+                            BuildingInfoPanelChildren["ConstructionCostsIcon"].GetComponent<Image>().sprite = (Sprite)Resources.Load("Sprite/person-logo", typeof(Sprite));
                             break;
                         case Resource.ResourceType.Energy:
-                            BuildingInfoPanelChildren["ConstructionCostsIcon"].GetComponent<Image>().sprite = (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Sprite/lightning-logo.jpg", typeof(Sprite));
+                            BuildingInfoPanelChildren["ConstructionCostsIcon"].GetComponent<Image>().sprite = (Sprite)Resources.Load("Sprite/lightning-logo", typeof(Sprite));
                             break;
                         case Resource.ResourceType.Food:
-                            BuildingInfoPanelChildren["ConstructionCostsIcon"].GetComponent<Image>().sprite = (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Sprite/fork_logo.png", typeof(Sprite));
+                            BuildingInfoPanelChildren["ConstructionCostsIcon"].GetComponent<Image>().sprite = (Sprite)Resources.Load("Sprite/fork_logo", typeof(Sprite));
                             break;
                     }
                     
@@ -235,13 +235,13 @@ public class InputManager : MonoBehaviour
                     switch (cost.Resource)
                     {
                         case Resource.ResourceType.People:
-                            BuildingInfoPanelChildren["TickCostsIcon"].GetComponent<Image>().sprite = (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Sprite/person-logo.jpg", typeof(Sprite));
+                            BuildingInfoPanelChildren["TickCostsIcon"].GetComponent<Image>().sprite = (Sprite)Resources.Load("Sprite/person-logo", typeof(Sprite));
                             break;
                         case Resource.ResourceType.Energy:
-                            BuildingInfoPanelChildren["TickCostsIcon"].GetComponent<Image>().sprite = (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Sprite/lightning-logo.jpg", typeof(Sprite));
+                            BuildingInfoPanelChildren["TickCostsIcon"].GetComponent<Image>().sprite = (Sprite)Resources.Load("Sprite/lightning-logo", typeof(Sprite));
                             break;
                         case Resource.ResourceType.Food:
-                            BuildingInfoPanelChildren["TickCostsIcon"].GetComponent<Image>().sprite = (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Sprite/fork_logo.png", typeof(Sprite));
+                            BuildingInfoPanelChildren["TickCostsIcon"].GetComponent<Image>().sprite = (Sprite)Resources.Load("Sprite/fork_logo", typeof(Sprite));
                             break;
                     }
                 }
@@ -261,13 +261,13 @@ public class InputManager : MonoBehaviour
                     switch (cost.Resource)
                     {
                         case Resource.ResourceType.People:
-                            BuildingInfoPanelChildren["TickProductionIcon"].GetComponent<Image>().sprite = (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Sprite/person-logo.jpg", typeof(Sprite));
+                            BuildingInfoPanelChildren["TickProductionIcon"].GetComponent<Image>().sprite = (Sprite)Resources.Load("Sprite/person-logo", typeof(Sprite));
                             break;
                         case Resource.ResourceType.Energy:
-                            BuildingInfoPanelChildren["TickProductionIcon"].GetComponent<Image>().sprite = (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Sprite/lightning-logo.jpg", typeof(Sprite));
+                            BuildingInfoPanelChildren["TickProductionIcon"].GetComponent<Image>().sprite = (Sprite)Resources.Load("Sprite/lightning-logo", typeof(Sprite));
                             break;
                         case Resource.ResourceType.Food:
-                            BuildingInfoPanelChildren["TickProductionIcon"].GetComponent<Image>().sprite = (Sprite)AssetDatabase.LoadAssetAtPath("Assets/Sprite/fork_logo.png", typeof(Sprite));
+                            BuildingInfoPanelChildren["TickProductionIcon"].GetComponent<Image>().sprite = (Sprite)Resources.Load("Sprite/fork_logo", typeof(Sprite));
                             break;
                     }
                 }
